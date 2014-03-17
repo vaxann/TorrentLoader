@@ -2,14 +2,14 @@ var events = require('events');
 var fs = require('fs');
 var log = require('../log')(module);
 
-function Watcher(name, dir, fileMask, timer) {
-    log.info('Создаем объект надсмотрцик Watcher с параметрами: dir=%s, fileMask=%s, timer=%d', dir, fileMask, timer);
+function Watcher(job, fileMask) {
+    log.info('Создаем объект надсмотрцик Watcher с параметрами: job=%j, fileMask=%s', job, fileMask);
 
     var Watcher = this;
 
-    Watcher.dir = dir;
+    Watcher.dir = job.watchDir;
     Watcher.fileMask = fileMask;
-    Watcher.timer = timer;
+    Watcher.timer = job.checkFrequency * 1000;
     Watcher.locketFiles = [];
 
     events.EventEmitter.call(Watcher);
@@ -17,19 +17,19 @@ function Watcher(name, dir, fileMask, timer) {
     // Генерируем событие ошибки
     Watcher.Error = function(err) {
         Watcher.emit('Error', err);
-    }
+    };
 
     // Генерируем событи о наличии нового файла
     Watcher.NewFile = function(file) {
         Watcher.emit('NewFile', file);
-    }
+    };
 
     // После генерации события NewFile, новый файл нужно залочить, чтобы
     // он не был обработан идобавленн несколько раз, когда файл успешно поставлен на закачку
     // необходимо сделать ему UnlocFile
     Watcher.LocFile = function(file){
         Watcher.locketFiles.push(file);
-    }
+    };
 
     // Разлочить файл
     Watcher.UnlocFile = function(file){
@@ -37,7 +37,11 @@ function Watcher(name, dir, fileMask, timer) {
         if (index >= 0) {
             Watcher.locketFiles.splice(index, 1);
         }
-    }
+    };
+
+    Watcher.RemoveFile = function(file) {
+        fs.unlinkSync(file);
+    };
 
     // Читаем каталог на и проверям на наличие в нем файлов
     Watcher.CheckFolder = function() {
@@ -51,7 +55,7 @@ function Watcher(name, dir, fileMask, timer) {
                 }
             });
         });
-    }
+    };
 
     setInterval(Watcher.CheckFolder, Watcher.timer);
 }

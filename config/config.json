@@ -1,4 +1,9 @@
 {
+    "transmission": {
+        "host" : "localhost",
+        "port" : 9091,
+        "auth" : "ivanabramenko:frtgbfrtgb"
+    },
     "jobs": [
         {
             "name": "TV Shows",
