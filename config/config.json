@@ -1,0 +1,10 @@
+{
+    "jobs": [
+        {
+            "name": "TV Shows",
+            "checkFrequency": 1,
+            "watchDir": "C:\\Users\\aim.MONITEL\\Dropbox\\Torrents\\TV Shows",
+            "downloadDir": "C:\\"
+        }
+    ]
+}
