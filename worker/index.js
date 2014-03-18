@@ -37,17 +37,14 @@ function Worker(transmission, job, file) {
                                                 transmission.port,
                                                 transmission.auth,
                                                 job.downloadDir);
-            var changeDefDirRes = /responded: "(\w*)"$/gi ;
+            var changeDefDirRes = /responded: "(\w*)"/gi ;
 
             exec(changeDefDirReq,
                 function (error, stdout, stderr) {
                     if (error)  return callback(error);
                     if (stderr) return callback(stderr);
 
-                    log.debug(stdout);
-
                     var match = changeDefDirRes.exec(stdout);
-                    log.debug(match);
 
                     if (match != null && match.length > 1 && match[1] == 'success'){
                         Worker.ChangeDefDir(job.downloadDir);
@@ -65,7 +62,7 @@ function Worker(transmission, job, file) {
                                                 transmission.port,
                                                 transmission.auth,
                                                 file);
-            var addTorrentRes = /responded: "(\w*)"$/gi; //исправить
+            var addTorrentRes = /responded: "(\w*)"/gi; //исправить
 
             exec(addTorrentReq,
                 function (error, stdout, stderr) {

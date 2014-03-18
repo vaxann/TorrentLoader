@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d190392d-5319-4030-a7b3-fbe413a0d7f4" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/extester.js" afterPath="$PROJECT_DIR$/tests/extester.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/watcher/index.js" afterPath="$PROJECT_DIR$/watcher/index.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/worker/index.js" afterPath="$PROJECT_DIR$/worker/index.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
@@ -48,10 +46,10 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="index.js" pinned="false" current="true" current-in-tab="true">
+          <file leaf-file-name="index.js" pinned="false" current="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/watcher/index.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="54" column="66" selection-start="1746" selection-end="1746" vertical-scroll-proportion="0.6043956" vertical-offset="533" max-vertical-offset="1207">
+                <state line="54" column="66" selection-start="1746" selection-end="1746" vertical-scroll-proportion="1.4411303" vertical-offset="0" max-vertical-offset="1207">
                   <folding />
                 </state>
               </provider>
@@ -79,10 +77,10 @@
       </split-first>
       <split-second>
         <leaf>
-          <file leaf-file-name="index.js" pinned="false" current="false" current-in-tab="true">
+          <file leaf-file-name="index.js" pinned="false" current="true" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/worker/index.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="72" column="54" selection-start="2835" selection-end="2835" vertical-scroll-proportion="0.3846154" vertical-offset="979" max-vertical-offset="1751">
+                <state line="44" column="56" selection-start="1642" selection-end="1642" vertical-scroll-proportion="0.4866562" vertical-offset="438" max-vertical-offset="1700">
                   <folding />
                 </state>
               </provider>
@@ -335,7 +333,11 @@
       <created>1395143465753</created>
       <updated>1395143465753</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Fix bug with regexp&#10;">
+      <created>1395144180287</created>
+      <updated>1395144180287</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TodoView" selected-index="1">
@@ -600,13 +602,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tests/extester.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="17" selection-start="199" selection-end="199" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="221">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/log/index.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="21" column="7" selection-start="670" selection-end="670" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="510">
@@ -614,16 +609,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/worker/index.js">
+    <entry file="file://$PROJECT_DIR$/watcher/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="72" column="54" selection-start="2835" selection-end="2835" vertical-scroll-proportion="0.3846154" vertical-offset="979" max-vertical-offset="1751">
+        <state line="54" column="66" selection-start="1746" selection-end="1746" vertical-scroll-proportion="1.4411303" vertical-offset="0" max-vertical-offset="1207">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/watcher/index.js">
+    <entry file="file://$PROJECT_DIR$/tests/extester.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="54" column="66" selection-start="1746" selection-end="1746" vertical-scroll-proportion="0.6043956" vertical-offset="533" max-vertical-offset="1207">
+        <state line="7" column="17" selection-start="199" selection-end="199" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="221">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/worker/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="44" column="56" selection-start="1642" selection-end="1642" vertical-scroll-proportion="0.4866562" vertical-offset="438" max-vertical-offset="1700">
           <folding />
         </state>
       </provider>
