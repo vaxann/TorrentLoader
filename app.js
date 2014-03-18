@@ -33,7 +33,7 @@ jobs.forEach(function(job) {
         var worker = new Worker(transmission, job, newFile);
 
         worker.on('Error', function(err){
-            log.error('Ошибка команд в transmission: %j', err);
+            log.error('Ошибка команд в transmission: %s', err);
             watcher.UnlocFile(newFile);
         });
 

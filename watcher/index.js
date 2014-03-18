@@ -1,6 +1,7 @@
 var events = require('events');
 var fs = require('fs');
 var log = require('../log')(module);
+var path = require('path');
 
 function Watcher(job, fileMask) {
     log.info('Создаем объект надсмотрцик Watcher с параметрами: job=%j, fileMask=%s', job, fileMask);
@@ -51,7 +52,7 @@ function Watcher(job, fileMask) {
 
             files.forEach(function(file) {
                 if (Watcher.fileMask.exec(file) !== null && Watcher.locketFiles.indexOf(file) == -1) {
-                    Watcher.NewFile(file);
+                    Watcher.NewFile(path.join(Watcher.dir, file));
                 }
             });
         });

@@ -8,8 +8,8 @@
         {
             "name": "TV Shows",
             "checkFrequency": 1,
-            "watchDir": "C:\\Users\\aim.MONITEL\\Dropbox\\Torrents\\TV Shows",
-            "downloadDir": "C:\\",
+            "watchDir": "/home/ivanabramenko/downloads/torrents/tvsows",
+            "downloadDir":  "/home/ivanabramenko/capsule1/tv shows",
             "completeCMD" : ""
         }
     ]
