@@ -51,7 +51,7 @@ function Watcher(job, fileMask) {
             if (files.length == 0) return;
 
             files.forEach(function(file) {
-                if (Watcher.fileMask.exec(file) !== null && Watcher.locketFiles.indexOf(file) == -1) {
+                if (Watcher.fileMask.test(file) && Watcher.locketFiles.indexOf(file) == -1) {
                     Watcher.NewFile(path.join(Watcher.dir, file));
                 }
             });
