@@ -49,7 +49,7 @@ function Worker(transmission, job, file) {
                     var match = changeDefDirRes.exec(stdout);
                     log.debug(match);
 
-                    if (match !== null && match.length > 0 && match[0] == 'success'){
+                    if (match !== null && match.length > 1 && match[1] == 'success'){
                         Worker.ChangeDefDir(job.downloadDir);
                         callback(null);
                     } else {
@@ -74,7 +74,7 @@ function Worker(transmission, job, file) {
 
                     var match = addTorrentRes.exec(stdout);
 
-                    if (match !== null && match.length > 0 && match[0] == 'success'){
+                    if (match !== null && match.length > 1 && match[1] == 'success'){
                         Worker.AddedFile(file);
                         callback(null);
                     } else {
