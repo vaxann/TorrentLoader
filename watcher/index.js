@@ -4,7 +4,7 @@ var log = require('../log')(module);
 var path = require('path');
 
 function Watcher(job, fileMask) {
-    log.info('Создаем объект надсмотрцик Watcher с параметрами: job=%j, fileMask=%s', job, fileMask);
+    log.debug('Создаем объект надсмотрцик Watcher с параметрами: job=%j, fileMask=%s', job, fileMask);
 
     var Watcher = this;
 

@@ -5,7 +5,7 @@ var async = require('async');
 var log = require('../log')(module);
 
 function Worker(transmission, job, file) {
-    log.info('Создаем объект работник Worker с параметрами: transmission-remote=%j, job=%j, file=%s', transmission, job, file);
+    log.debug('Создаем объект работник Worker с параметрами: transmission-remote=%j, job=%j, file=%s', transmission, job, file);
     var Worker = this;
 
     events.EventEmitter.call(Worker);
@@ -44,7 +44,10 @@ function Worker(transmission, job, file) {
                     if (error)  return callback(error);
                     if (stderr) return callback(stderr);
 
+                    log.debug(stdout);
+
                     var match = changeDefDirRes.exec(stdout);
+                    log.debug(match);
 
                     if (match !== null && match.length > 0 && match[0] == 'success'){
                         Worker.ChangeDefDir(job.downloadDir);
