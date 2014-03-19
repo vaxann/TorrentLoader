@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d190392d-5319-4030-a7b3-fbe413a0d7f4" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/config_ubuntu.json" afterPath="$PROJECT_DIR$/config/config_ubuntu.json" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/log/index.js" afterPath="$PROJECT_DIR$/log/index.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
@@ -31,7 +32,7 @@
           <file leaf-file-name="index.js" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/config/index.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="2" column="0" selection-start="58" selection-end="58" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="221">
+                <state line="6" column="0" selection-start="141" selection-end="141" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="221">
                   <folding />
                 </state>
               </provider>
@@ -40,7 +41,7 @@
           <file leaf-file-name="app.js" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/app.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="42" column="36" selection-start="1195" selection-end="1195" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="935">
+                <state line="15" column="0" selection-start="367" selection-end="367" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="935">
                   <folding />
                 </state>
               </provider>
@@ -64,10 +65,10 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="index.js" pinned="false" current="true" current-in-tab="true">
+          <file leaf-file-name="index.js" pinned="false" current="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/log/index.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="23" column="7" selection-start="736" selection-end="736" vertical-scroll-proportion="0.6043277" vertical-offset="0" max-vertical-offset="647">
+                <state line="16" column="14" selection-start="494" selection-end="494" vertical-scroll-proportion="0.42040184" vertical-offset="0" max-vertical-offset="647">
                   <folding />
                 </state>
               </provider>
@@ -77,10 +78,10 @@
       </split-first>
       <split-second>
         <leaf>
-          <file leaf-file-name="index.js" pinned="false" current="false" current-in-tab="true">
+          <file leaf-file-name="index.js" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/worker/index.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="16" column="34" selection-start="541" selection-end="541" vertical-scroll-proportion="0.42902207" vertical-offset="0" max-vertical-offset="1802">
+                <state line="24" column="0" selection-start="803" selection-end="803" vertical-scroll-proportion="0.0" vertical-offset="1168" max-vertical-offset="1802">
                   <folding />
                 </state>
               </provider>
@@ -95,10 +96,10 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="config_ubuntu.json" pinned="false" current="false" current-in-tab="false">
+          <file leaf-file-name="config_ubuntu.json" pinned="false" current="true" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/config/config_ubuntu.json">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="13" column="9" selection-start="400" selection-end="400" vertical-scroll-proportion="-8.5" vertical-offset="0" max-vertical-offset="374">
+                <state line="16" column="0" selection-start="410" selection-end="410" vertical-scroll-proportion="0.4380032" vertical-offset="0" max-vertical-offset="621">
                   <folding />
                 </state>
               </provider>
@@ -129,12 +130,12 @@
         <option value="$PROJECT_DIR$/config/index.js" />
         <option value="$PROJECT_DIR$/config/config.json" />
         <option value="$PROJECT_DIR$/README.md" />
-        <option value="$PROJECT_DIR$/config/config_ubuntu.json" />
         <option value="$PROJECT_DIR$/extester.js" />
         <option value="$PROJECT_DIR$/tests/extester.js" />
         <option value="$PROJECT_DIR$/app.js" />
         <option value="$PROJECT_DIR$/worker/index.js" />
         <option value="$PROJECT_DIR$/watcher/index.js" />
+        <option value="$PROJECT_DIR$/config/config_ubuntu.json" />
         <option value="$PROJECT_DIR$/log/index.js" />
       </list>
     </option>
@@ -360,7 +361,11 @@
       <created>1395215333268</created>
       <updated>1395215333268</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Fix error with logger creation&#10;">
+      <created>1395215491432</created>
+      <updated>1395215491432</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TodoView" selected-index="1">
@@ -425,7 +430,8 @@
     <MESSAGE value="Added debug msgs&#10;" />
     <MESSAGE value="Fix bug with regexp&#10;" />
     <MESSAGE value="Added a lot of debug messages" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added a lot of debug messages" />
+    <MESSAGE value="Fix error with logger creation&#10;" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix error with logger creation&#10;" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -596,19 +602,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config/config_ubuntu.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="9" selection-start="400" selection-end="400" vertical-scroll-proportion="-8.5" vertical-offset="0" max-vertical-offset="374">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/node_modules/dateformat/lib/dateformat.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3213">
           <folding>
             <element signature="n#!!doc" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="0" selection-start="141" selection-end="141" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="221">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/worker/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="24" column="0" selection-start="803" selection-end="803" vertical-scroll-proportion="0.0" vertical-offset="1168" max-vertical-offset="1802">
+          <folding />
         </state>
       </provider>
     </entry>
@@ -619,16 +632,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config/index.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="0" selection-start="58" selection-end="58" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="221">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="42" column="36" selection-start="1195" selection-end="1195" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="935">
+        <state line="15" column="0" selection-start="367" selection-end="367" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="935">
           <folding />
         </state>
       </provider>
@@ -640,16 +646,16 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/worker/index.js">
+    <entry file="file://$PROJECT_DIR$/log/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="34" selection-start="541" selection-end="541" vertical-scroll-proportion="0.42902207" vertical-offset="0" max-vertical-offset="1802">
+        <state line="16" column="14" selection-start="494" selection-end="494" vertical-scroll-proportion="0.42040184" vertical-offset="0" max-vertical-offset="647">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/log/index.js">
+    <entry file="file://$PROJECT_DIR$/config/config_ubuntu.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="7" selection-start="736" selection-end="736" vertical-scroll-proportion="0.6043277" vertical-offset="0" max-vertical-offset="647">
+        <state line="16" column="0" selection-start="410" selection-end="410" vertical-scroll-proportion="0.4380032" vertical-offset="0" max-vertical-offset="621">
           <folding />
         </state>
       </provider>

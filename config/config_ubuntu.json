@@ -7,7 +7,7 @@
     "jobs": [
         {
             "name": "TV Shows",
-            "checkFrequency": 1,
+            "checkFrequency": 30,
             "watchDir": "/home/ivanabramenko/downloads/torrents/tvshows",
             "downloadDir":  "/home/ivanabramenko/capsule1/tv shows",
             "completeCMD" : ""
