@@ -7,7 +7,7 @@ function getLogger(module) {
 
     var path = module.filename.split('/').slice(-2).join('/');
 
-    return winston = new winston.Logger({
+    return new winston.Logger({
         transports: [
             new winston.transports.Console({
                 colorize: true,

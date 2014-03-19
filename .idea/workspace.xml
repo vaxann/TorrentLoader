@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d190392d-5319-4030-a7b3-fbe413a0d7f4" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app.js" afterPath="$PROJECT_DIR$/app.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/log/index.js" afterPath="$PROJECT_DIR$/log/index.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/watcher/index.js" afterPath="$PROJECT_DIR$/watcher/index.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/worker/index.js" afterPath="$PROJECT_DIR$/worker/index.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="TorrentLoader.iws" />
@@ -70,7 +67,7 @@
           <file leaf-file-name="index.js" pinned="false" current="true" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/log/index.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state line="23" column="7" selection-start="746" selection-end="746" vertical-scroll-proportion="0.6043277" vertical-offset="0" max-vertical-offset="647">
+                <state line="23" column="7" selection-start="736" selection-end="736" vertical-scroll-proportion="0.6043277" vertical-offset="0" max-vertical-offset="647">
                   <folding />
                 </state>
               </provider>
@@ -359,7 +356,11 @@
       <created>1395144471513</created>
       <updated>1395144471513</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Added a lot of debug messages">
+      <created>1395215333268</created>
+      <updated>1395215333268</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TodoView" selected-index="1">
@@ -423,7 +424,8 @@
     <MESSAGE value="Added module async&#10;" />
     <MESSAGE value="Added debug msgs&#10;" />
     <MESSAGE value="Fix bug with regexp&#10;" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix bug with regexp&#10;" />
+    <MESSAGE value="Added a lot of debug messages" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added a lot of debug messages" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -647,7 +649,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/log/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="23" column="7" selection-start="746" selection-end="746" vertical-scroll-proportion="0.6043277" vertical-offset="0" max-vertical-offset="647">
+        <state line="23" column="7" selection-start="736" selection-end="736" vertical-scroll-proportion="0.6043277" vertical-offset="0" max-vertical-offset="647">
           <folding />
         </state>
       </provider>
