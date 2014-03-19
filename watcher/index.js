@@ -4,7 +4,7 @@ var log = require('../log')(module);
 var path = require('path');
 
 function Watcher(job, fileMask) {
-    log.debug('Создаем объект надсмотрцик Watcher с параметрами: job=%j, fileMask=%s', job, fileMask);
+    log.debug('Creating object Watcher with arguments', arguments);
 
     var Watcher = this;
 
@@ -17,11 +17,13 @@ function Watcher(job, fileMask) {
 
     // Генерируем событие ошибки
     Watcher.Error = function(err) {
+        log.debug("Error function called, emitting Error event with argument = ", arguments);
         Watcher.emit('Error', err);
     };
 
     // Генерируем событи о наличии нового файла
     Watcher.NewFile = function(file) {
+        log.debug("NewFile function called, emitting NewFile event with argument = ", arguments);
         Watcher.emit('NewFile', file);
     };
 
@@ -29,23 +31,29 @@ function Watcher(job, fileMask) {
     // он не был обработан идобавленн несколько раз, когда файл успешно поставлен на закачку
     // необходимо сделать ему UnlocFile
     Watcher.LocFile = function(file){
+        log.debug('Locking file:', file);
         Watcher.locketFiles.push(file);
+        log.debug('File locked:', file);
     };
 
     // Разлочить файл
     Watcher.UnlocFile = function(file){
+        log.debug('Unlocking file:', file);
         var index = Watcher.locketFiles.indexOf(file);
         if (index >= 0) {
             Watcher.locketFiles.splice(index, 1);
+            log.debug('File unlocked:', file);
         }
     };
 
     Watcher.RemoveFile = function(file) {
+        log.debug('Removing file:', file);
         fs.unlinkSync(file);
     };
 
     // Читаем каталог на и проверям на наличие в нем файлов
     Watcher.CheckFolder = function() {
+        log.debug('Checking folder:', Watcher.dir);
         fs.readdir(Watcher.dir, function(err, files) {
             if (err) return Watcher.Error(err);
             if (files.length == 0) return;
@@ -58,6 +66,7 @@ function Watcher(job, fileMask) {
         });
     };
 
+    log.debug('Setting timer for CheckFolder each', Watcher.timer, 'ms');
     setInterval(Watcher.CheckFolder, Watcher.timer);
 }
 

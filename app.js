@@ -41,7 +41,7 @@ jobs.forEach(function(job) {
             //удалить торрент
             watcher.RemoveFile(file);
             watcher.UnlocFile(file);
-            log.error('Файл %s загружается', file);
+            log.info('Файл %s загружается', file);
         });
 
 

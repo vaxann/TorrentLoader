@@ -5,28 +5,27 @@ var async = require('async');
 var log = require('../log')(module);
 
 function Worker(transmission, job, file) {
-    log.debug('Создаем объект работник Worker с параметрами: transmission-remote=%j, job=%j, file=%s', transmission, job, file);
+    log.debug('Creating object Worker with arguments:', arguments);
+
     var Worker = this;
 
     events.EventEmitter.call(Worker);
 
     // Генерируем событие ошибки
     Worker.Error = function(err) {
-        Worker.emit('Error', err);
-    };
-
-    // Генерируем событие ошибки
-    Worker.Error = function(err) {
+        log.debug("Error function called, emitting Error event with argument = ", arguments);
         Worker.emit('Error', err);
     };
 
     // Генерируем событие смены каталога по умолчанию
     Worker.ChangeDefDir = function(dir) {
+        log.debug("ChangeDefDir function called, emitting ChangeDefDir event with argument = ", arguments);
         Worker.emit('ChangeDefDir', dir);
     };
 
     // Генерируем событие добавления файла
     Worker.AddedFile = function(file) {
+        log.debug("AddedFile function called, emitting AddedFile event with argument = ", arguments);
         Worker.emit('AddedFile', file);
     };
 
@@ -37,14 +36,19 @@ function Worker(transmission, job, file) {
                                                 transmission.port,
                                                 transmission.auth,
                                                 job.downloadDir);
+            log.debug("changeDefDirReq =", changeDefDirReq);
+
             var changeDefDirRes = /responded: "(\w*)"/gi ;
+
 
             exec(changeDefDirReq,
                 function (error, stdout, stderr) {
+                    log.debug("Response to changing dir:", arguments);
                     if (error)  return callback(error);
                     if (stderr) return callback(stderr);
 
                     var match = changeDefDirRes.exec(stdout);
+                    log.debug("Results of exec regexp to changeDefDir response: match =", match);
 
                     if (match != null && match.length > 1 && match[1] == 'success'){
                         Worker.ChangeDefDir(job.downloadDir);
@@ -62,6 +66,7 @@ function Worker(transmission, job, file) {
                                                 transmission.port,
                                                 transmission.auth,
                                                 file);
+            log.debug("addTorrentReq =", addTorrentReq);
             var addTorrentRes = /responded: "(\w*)"/gi; //исправить
 
             exec(addTorrentReq,
@@ -70,6 +75,7 @@ function Worker(transmission, job, file) {
                     if (stderr) return callback(stderr);
 
                     var match = addTorrentRes.exec(stdout);
+                    log.debug("Results of exec regexp to addTorrent response: match =", match);
 
                     if (match != null && match.length > 1 && match[1] == 'success'){
                         Worker.AddedFile(file);
