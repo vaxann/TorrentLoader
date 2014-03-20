@@ -24,7 +24,7 @@ jobs.forEach(function(job) {
         log.error('Ошибка при наблюдении за каталогом: %j', err);
     });
 
-    // при появлении новог файла
+    // при появлении нового файла
     watcher.on('NewFile', function(newFile){
         log.info('Добавляем новую закачку: %s',newFile);
 

@@ -2,6 +2,7 @@ var events = require('events');
 var exec = require('child_process').exec;
 var util = require('util');
 var async = require('async');
+var nt = require('nt');
 var log = require('../log')(module);
 
 function Worker(transmission, job, file) {
@@ -30,7 +31,17 @@ function Worker(transmission, job, file) {
     };
 
     async.waterfall([
-        function(callback){ //меняем путь для загрузки по умалчанию на job.downloadDir
+        function(callback) { // проверяем торрент, получаем его хеш
+            nt.read(file, function(err,torrent) {
+                log.debug('Response to checking torrent:', arguments);
+                if (err) return callback(err);
+
+                var infoHash = torrent.infoHash();
+                log.debug('infoHash =',infoHash);
+                callback(null, infoHash);
+            });
+        },
+        function(infoHash, callback){ //меняем путь для загрузки по умалчанию на job.downloadDir
             var changeDefDirReq = util.format('transmission-remote %s:%d --auth=%s --download-dir "%s"',
                                                 transmission.host,
                                                 transmission.port,
@@ -52,7 +63,7 @@ function Worker(transmission, job, file) {
 
                     if (match != null && match.length > 1 && match[1] == 'success'){
                         Worker.ChangeDefDir(job.downloadDir);
-                        callback(null);
+                        callback(null, infoHash);
                     } else {
                         callback('Transmission responded for change download-dir unsuccess');
                     }
@@ -60,7 +71,7 @@ function Worker(transmission, job, file) {
                 }
             );
         },
-        function(callback){ //добавляем торрент в загрузку
+        function(infoHash, callback){ //добавляем торрент в загрузку
             var addTorrentReq = util.format('transmission-remote %s:%d --auth=%s --add "%s"',
                                                 transmission.host,
                                                 transmission.port,
@@ -71,6 +82,7 @@ function Worker(transmission, job, file) {
 
             exec(addTorrentReq,
                 function (error, stdout, stderr) {
+                    log.debug("Response to add torrent:", arguments);
                     if (error)  return callback(error);
                     if (stderr) return callback(stderr);
 
@@ -79,7 +91,7 @@ function Worker(transmission, job, file) {
 
                     if (match != null && match.length > 1 && match[1] == 'success'){
                         Worker.AddedFile(file);
-                        callback(null);
+                        callback(null, infoHash);
                     } else {
                         callback('Transmission responded for adding torrent unsuccess');
                     }
@@ -87,7 +99,7 @@ function Worker(transmission, job, file) {
             );
         }
     ],
-        function(err, result) {
+        function(err, result) { // Вконце устанавливаем таймер и ждем когда торрент скачается
             if (err) Worker.Error(err);
         }
     );

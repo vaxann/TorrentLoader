@@ -16,7 +16,7 @@ function getLogger(module) {
                 timestamp: function(){
                     return dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss.L");
                 },
-                level: (ENV == 'dev') ? 'debug' : 'error',
+                level: (ENV == 'dev') ? 'debug' : 'info',
                 //level: 'debug',
                 label: path
             })
