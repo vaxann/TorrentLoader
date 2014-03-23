@@ -15,28 +15,27 @@ function Watcher(job, fileMask) {
 
     events.EventEmitter.call(Watcher);
 
-    // Генерируем событие ошибки
+    // Emit error Event
     Watcher.Error = function(err) {
         log.debug("Error function called, emitting Error event with argument = ", arguments);
         Watcher.emit('Error', err);
     };
 
-    // Генерируем событи о наличии нового файла
+    // Emit NewFile Event
     Watcher.NewFile = function(file) {
         log.debug("NewFile function called, emitting NewFile event with argument = ", arguments);
         Watcher.emit('NewFile', file);
     };
 
-    // После генерации события NewFile, новый файл нужно залочить, чтобы
-    // он не был обработан идобавленн несколько раз, когда файл успешно поставлен на закачку
-    // необходимо сделать ему UnlocFile
+    // Lock file, when file locked function CheckFolder does not Emit NewFile event
+    // with this file
     Watcher.LocFile = function(file){
         log.debug('Locking file:', file);
         Watcher.locketFiles.push(file);
         log.debug('File locked:', file);
     };
 
-    // Разлочить файл
+    // Unlocking file
     Watcher.UnlocFile = function(file){
         log.debug('Unlocking file:', file);
         var index = Watcher.locketFiles.indexOf(file);
@@ -46,12 +45,13 @@ function Watcher(job, fileMask) {
         }
     };
 
+    // Remove file from disk
     Watcher.RemoveFile = function(file) {
         log.debug('Removing file:', file);
         fs.unlinkSync(file);
     };
 
-    // Читаем каталог на и проверям на наличие в нем файлов
+    // Read dir and check in for new torrent files
     Watcher.CheckFolder = function() {
         log.debug('Checking folder:', Watcher.dir);
         fs.readdir(Watcher.dir, function(err, files) {

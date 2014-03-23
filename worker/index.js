@@ -12,36 +12,36 @@ function Worker(transmission, job, file) {
 
     events.EventEmitter.call(Worker);
 
-    // Генерируем событие ошибки
+    // Emit error Event
     Worker.Error = function(err) {
         log.debug("Error function called, emitting Error event with argument = ", arguments);
         Worker.emit('Error', err);
     };
 
-    // Генерируем событие смены каталога по умолчанию
+    // Emit ChangeDefDir Event
     Worker.ChangeDefDir = function(dir) {
         log.debug("ChangeDefDir function called, emitting ChangeDefDir event with argument = ", arguments);
         Worker.emit('ChangeDefDir', dir);
     };
 
-    // Генерируем событие добавления файла
+    // Emit AddedFile Event
     Worker.AddedFile = function(file) {
         log.debug("AddedFile function called, emitting AddedFile event with argument = ", arguments);
         Worker.emit('AddedFile', file);
     };
 
     async.waterfall([
-        function(callback) { // проверяем торрент, получаем его хеш
+        function(callback) { // check torrent and get it's infoHash
             nt.read(file, function(err,torrent) {
                 log.debug('Response to checking torrent:', arguments);
                 if (err) return callback(err);
 
                 var infoHash = torrent.infoHash();
-                log.debug('infoHash =',infoHash);
+                log.debug('infoHash =',infoHash); // c2e3fdbe1d187a26c3835f4f4cbe3df62acbb987
                 callback(null, infoHash);
             });
         },
-        function(infoHash, callback){ //меняем путь для загрузки по умалчанию на job.downloadDir
+        function(infoHash, callback){ //changing defDownloadDor to job.downloadDir
             var changeDefDirReq = util.format('transmission-remote %s:%d --auth=%s --download-dir "%s"',
                                                 transmission.host,
                                                 transmission.port,
@@ -71,7 +71,7 @@ function Worker(transmission, job, file) {
                 }
             );
         },
-        function(infoHash, callback){ //добавляем торрент в загрузку
+        function(infoHash, callback){ //add torrent ot download
             var addTorrentReq = util.format('transmission-remote %s:%d --auth=%s --add "%s"',
                                                 transmission.host,
                                                 transmission.port,
@@ -99,7 +99,7 @@ function Worker(transmission, job, file) {
             );
         }
     ],
-        function(err, result) { // Вконце устанавливаем таймер и ждем когда торрент скачается
+        function(err, result) { // in the end set timer and wait while torrent will be download
             if (err) Worker.Error(err);
         }
     );
