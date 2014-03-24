@@ -44,7 +44,10 @@ jobs.forEach(function(job) {
             log.info('Torrent %s started', file);
         });
 
-
+        worker.on('DownloadCompleted', function(file){
+            log.info('Torrent %s downloaded', file);
+            worker = null;
+        });
 
     });
 });

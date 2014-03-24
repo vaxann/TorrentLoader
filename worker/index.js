@@ -12,6 +12,10 @@ function Worker(transmission, job, file) {
 
     events.EventEmitter.call(Worker);
 
+    Worker.infoHash = null;
+    Worker.intervalObject = null;
+    Worker.file = file;
+
     // Emit error Event
     Worker.Error = function(err) {
         log.debug("Error function called, emitting Error event with argument = ", arguments);
@@ -30,14 +34,50 @@ function Worker(transmission, job, file) {
         Worker.emit('AddedFile', file);
     };
 
+    // Emit AddedFile Event
+    Worker.DownloadCompleted = function(file) {
+        log.debug("DownloadCompleted function called, emitting DownloadCompleted event with argument = ", arguments);
+        Worker.emit('DownloadCompleted', file);
+    };
+
+    // Check download state of current torrent
+    Worker.CheckDownloadState = function(){
+        var checkDownloadStateReq = util.format('transmission-remote %s:%d --auth=%s --torrent %s --info',
+            transmission.host,
+            transmission.port,
+            transmission.auth,
+            Worker.infoHash);
+        log.debug("checkDownloadStateReq =", changeDefDirReq);
+
+        var checkDownloadStateRes = /Percent Done: ([0-9\.]*)%/gi ;
+
+        exec(checkDownloadStateReq,
+            function (error, stdout, stderr) {
+                log.debug("Response to changing dir:", arguments);
+                if (error)  return callback(error);
+                if (stderr) return callback(stderr);
+
+                var match = checkDownloadStateRes.exec(stdout);
+                log.debug("Results of exec regexp to checkDownloadState response: match =", match);
+
+                if (match != null && match.length > 1 && match[1] == '100'){
+                    clearInterval(Worker.intervalObject());
+                    Worker.DownloadCompleted(Worker.file);
+                } else {
+                    log.debug("Download uncompleted")
+                }
+            }
+        );
+    };
+
     async.waterfall([
         function(callback) { // check torrent and get it's infoHash
-            nt.read(file, function(err,torrent) {
+            nt.read(Worker.file, function(err,torrent) {
                 //log.debug('Response to checking torrent:', arguments);
                 if (err) return callback(err);
 
                 var infoHash = torrent.infoHash();
-                log.debug('infoHash =',infoHash); // c2e3fdbe1d187a26c3835f4f4cbe3df62acbb987
+                log.debug('infoHash =',infoHash); // 51881f6e9546e6e6bba1a4a797c3dab3c07b655c
                 callback(null, infoHash);
             });
         },
@@ -76,7 +116,7 @@ function Worker(transmission, job, file) {
                                                 transmission.host,
                                                 transmission.port,
                                                 transmission.auth,
-                                                file);
+                                                Worker.file);
             log.debug("addTorrentReq =", addTorrentReq);
             var addTorrentRes = /responded: "(\w*)"/gi; //исправить
 
@@ -90,7 +130,7 @@ function Worker(transmission, job, file) {
                     log.debug("Results of exec regexp to addTorrent response: match =", match);
 
                     if (match != null && match.length > 1 && match[1] == 'success'){
-                        Worker.AddedFile(file);
+                        Worker.AddedFile(Worker.file);
                         callback(null, infoHash);
                     } else {
                         callback('Transmission responded for adding torrent unsuccess');
@@ -99,8 +139,11 @@ function Worker(transmission, job, file) {
             );
         }
     ],
-        function(err, result) { // in the end set timer and wait while torrent will be download
-            if (err) Worker.Error(err);
+        function(err, infoHash) { // in the end set timer and wait while torrent will be download
+            if (err) return Worker.Error(err);
+
+            Worker.infoHash = infoHash;
+            Worker.intervalObject = setInterval(Worker.CheckDownloadState, 30000);
         }
     );
 
