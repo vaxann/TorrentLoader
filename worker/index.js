@@ -47,7 +47,7 @@ function Worker(transmission, job, file) {
             transmission.port,
             transmission.auth,
             Worker.infoHash);
-        log.debug("checkDownloadStateReq =", changeDefDirReq);
+        log.debug("checkDownloadStateReq =", checkDownloadStateReq);
 
         var checkDownloadStateRes = /Percent Done: ([0-9\.]*)%/gi ;
 
