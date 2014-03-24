@@ -33,7 +33,7 @@ function Worker(transmission, job, file) {
     async.waterfall([
         function(callback) { // check torrent and get it's infoHash
             nt.read(file, function(err,torrent) {
-                log.debug('Response to checking torrent:', arguments);
+                //log.debug('Response to checking torrent:', arguments);
                 if (err) return callback(err);
 
                 var infoHash = torrent.infoHash();
