@@ -61,7 +61,7 @@ function Worker(transmission, job, file) {
                 log.debug("Results of exec regexp to checkDownloadState response: match =", match);
 
                 if (match != null && match.length > 1 && match[1] == '100'){
-                    clearInterval(Worker.intervalObject());
+                    clearInterval(Worker.intervalObject);
                     Worker.DownloadCompleted(Worker.file);
                 } else {
                     log.debug("Download uncompleted")
