@@ -1,14 +1,40 @@
 var Watcher = require('./watcher');
 var Worker = require('./worker');
+var dump = require('./worker/dump');
 var log = require('./log')(module);
 var config = require('./config');
-
 
 var fileMask = /\.torrent$/gi;  // finding only torrent files
 
 log.info('Starting app');
 
 var jobs = config.get('jobs');
+
+function addWorker(watcher, transmission, job, newFile) {
+    watcher.LocFile(newFile);
+
+    var worker = new Worker(transmission, job, newFile);
+
+    worker.on('Error', function (err) {
+        log.error('Error with executing command in transmission:', err);
+        watcher.UnlocFile(newFile);
+    });
+
+    worker.on('AddedFile', function (file) {
+        //удалить торрент
+        watcher.RemoveFile(file);
+        watcher.UnlocFile(file);
+        log.info('Torrent %s started', file);
+    });
+
+    worker.on('DownloadCompleted', function (file) {
+        log.info('Torrent %s downloaded', file);
+        worker = null;
+    });
+}
+
+//restore dumpHash
+dump.init();
 
 jobs.forEach(function(job) {
     var watcher = new Watcher(job, fileMask);
@@ -19,35 +45,17 @@ jobs.forEach(function(job) {
     else
         transmission = config.get('transmission');
 
-    // При ошибке чтения каталога
+    // add works from old session
+
+
+    // if error reading dir
     watcher.on('Error', function(err){
         log.error('Error in watching for dir:', err);
     });
 
-    // при появлении нового файла
+    // if added new file
     watcher.on('NewFile', function(newFile){
         log.info('Add new download:',newFile);
-
-        watcher.LocFile(newFile);
-
-        var worker = new Worker(transmission, job, newFile);
-
-        worker.on('Error', function(err){
-            log.error('Error with executing command in transmission:', err);
-            watcher.UnlocFile(newFile);
-        });
-
-        worker.on('AddedFile', function(file){
-            //удалить торрент
-            watcher.RemoveFile(file);
-            watcher.UnlocFile(file);
-            log.info('Torrent %s started', file);
-        });
-
-        worker.on('DownloadCompleted', function(file){
-            log.info('Torrent %s downloaded', file);
-            worker = null;
-        });
-
+        addWorker(watcher, transmission, job, newFile);
     });
 });

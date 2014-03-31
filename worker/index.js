@@ -4,6 +4,7 @@ var util = require('util');
 var async = require('async');
 var nt = require('nt');
 var log = require('../log')(module);
+var dump = require('./dump');
 
 function Worker(transmission, job, file) {
     log.debug('Creating object Worker with arguments:', arguments);
@@ -54,8 +55,8 @@ function Worker(transmission, job, file) {
         exec(checkDownloadStateReq,
             function (error, stdout, stderr) {
                 log.debug("Response to changing dir:", arguments);
-                if (error)  return callback(error);
-                if (stderr) return callback(stderr);
+                if (error)  return log.error("Error with checkDownloadState:", error);
+                if (stderr) return log.error("Error with checkDownloadState:", stderr);
 
                 var match = checkDownloadStateRes.exec(stdout);
                 log.debug("Results of exec regexp to checkDownloadState response: match =", match);
@@ -70,6 +71,7 @@ function Worker(transmission, job, file) {
         );
     };
 
+    // Creating torrent and add it to download
     async.waterfall([
         function(callback) { // check torrent and get it's infoHash
             nt.read(Worker.file, function(err,torrent) {
