@@ -4,9 +4,9 @@ var util = require('util');
 var async = require('async');
 var nt = require('nt');
 var log = require('../log')(module);
-var dump = require('./dump');
+var Dump = require('./dump');
 
-function Worker(transmission, job, file) {
+function Worker(transmission, job, file, dump) {
     log.debug('Creating object Worker with arguments:', arguments);
 
     var Worker = this;
@@ -62,6 +62,8 @@ function Worker(transmission, job, file) {
                 log.debug("Results of exec regexp to checkDownloadState response: match =", match);
 
                 if (match != null && match.length > 1 && match[1] == '100'){
+                    Dump.removeDumpByHash(Worker.infoHash);
+
                     clearInterval(Worker.intervalObject);
                     Worker.DownloadCompleted(Worker.file);
                 } else {
@@ -73,17 +75,24 @@ function Worker(transmission, job, file) {
 
     // Creating torrent and add it to download
     async.waterfall([
-        function(callback) { // check torrent and get it's infoHash
+        function(callback) { // step = 1; check torrent and get it's infoHash
+            if (dump) return callback(null, dump.hash);
+
             nt.read(Worker.file, function(err,torrent) {
                 //log.debug('Response to checking torrent:', arguments);
                 if (err) return callback(err);
 
                 var infoHash = torrent.infoHash();
                 log.debug('infoHash =',infoHash); // 51881f6e9546e6e6bba1a4a797c3dab3c07b655c
+
+                dump = Dump.push(1, Worker.file, infoHash);
+
                 callback(null, infoHash);
             });
         },
-        function(infoHash, callback){ //changing defDownloadDor to job.downloadDir
+        function(infoHash, callback){ // step = 2; changing defDownloadDor to job.downloadDir
+            if (dump && dump.step >= 2 ) return callback(null, infoHash);
+
             var changeDefDirReq = util.format('transmission-remote %s:%d --auth=%s --download-dir "%s"',
                                                 transmission.host,
                                                 transmission.port,
@@ -105,6 +114,7 @@ function Worker(transmission, job, file) {
 
                     if (match != null && match.length > 1 && match[1] == 'success'){
                         Worker.ChangeDefDir(job.downloadDir);
+                        Dump.changeStep(infoHash, 2);
                         callback(null, infoHash);
                     } else {
                         callback('Transmission responded for change download-dir unsuccess');
@@ -113,7 +123,9 @@ function Worker(transmission, job, file) {
                 }
             );
         },
-        function(infoHash, callback){ //add torrent ot download
+        function(infoHash, callback){ //step = 3; add torrent ot download
+            if (dump && dump.step >= 3 ) return callback(null, infoHash);
+
             var addTorrentReq = util.format('transmission-remote %s:%d --auth=%s --add "%s"',
                                                 transmission.host,
                                                 transmission.port,
@@ -133,6 +145,7 @@ function Worker(transmission, job, file) {
 
                     if (match != null && match.length > 1 && match[1] == 'success'){
                         Worker.AddedFile(Worker.file);
+                        Dump.changeStep(infoHash, 3);
                         callback(null, infoHash);
                     } else {
                         callback('Transmission responded for adding torrent unsuccess');
@@ -141,11 +154,12 @@ function Worker(transmission, job, file) {
             );
         }
     ],
-        function(err, infoHash) { // in the end set timer and wait while torrent will be download
+        function(err, infoHash) { //step = 4; in the end set timer and wait while torrent will be download
             if (err) return Worker.Error(err);
 
             Worker.infoHash = infoHash;
             Worker.intervalObject = setInterval(Worker.CheckDownloadState, 30000);
+            Dump.changeStep(infoHash, 4);
         }
     );
 

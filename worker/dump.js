@@ -1,41 +1,60 @@
 var fs = require('fs');
 var path = require('path');
 var log = require('../log')(module);
-var fileNameOfDump = path.join(__dirname, 'dump.json');
 
+var fileNameOfDump = path.join(__dirname, 'dump.json');
 var dumpHash = {};
 var dumpDir = {};
 var dump = [];
 
 // add to end of file
-function push(transmission, job, file, hash)
+function push(step, file, hash) // step - stage of addition torrent
 {
-    var obj = {transmission: transmission, job: job, file: file, hash: hash};
+    var obj = {step: step, file: file, hash: hash};
 
-    if (getDumpByHash(hash) == null) {
+    var oldObj = getDumpByHash(hash);
+    if (oldObj == null) {
         dump.push(obj);
 
         rebuildIndexes();
 
         deserialize();
+
+        return obj;
     } else {
         log.debug("File already added to dump", file);
+        return oldObj;
     }
 }
+
+
+function changeStep(hash, step){
+    var obj = getDumpByHash(hash);
+    if (obj) {
+        obj.step = step;
+
+        deserialize();
+    }
+}
+
 
 // first ini dumpHash module
 function rebuildIndexes() {
     dumpHash = {};
     dumpDir = {};
 
-    dump.forEach(function (obj) {
-        dumpHash[obj.hash] = obj;
+    if (dump) {
+        dump.forEach(function (obj) {
+            dumpHash[obj.hash] = obj;
 
-        var dir = path.dirname(obj.file);
-        if (!dir in dumpDir) dumpDir[dir] = [];
-        dumpDir[dir].push(obj);
-    });
+            var dir = path.dirname(obj.file);
+            if (!dir in dumpDir) dumpDir[dir] = [];
+            dumpDir[dir].push(obj);
+        });
+    }
 }
+
+// first init
 function init(){
     if (serialize()) {
         //make dumpHash and dumpDir
@@ -43,6 +62,7 @@ function init(){
     }
 }
 
+//
 function getDumpByHash(hash){
     if (hash in dumpHash) {
         return dumpHash[hash];
@@ -61,7 +81,6 @@ function getDumpListByDir(dir){
 
 
 function removeDumpByHash(hash) {
-    // todo: removal obj from dump array
     if (hash in dumpHash) {
         var obj = dumpHash[hash];
 
@@ -69,6 +88,8 @@ function removeDumpByHash(hash) {
         if (index >= 0) dump.splice(index, 1);
 
         rebuildIndexes();
+
+        deserialize();
 
         return true;
     } else {
@@ -79,20 +100,19 @@ function removeDumpByHash(hash) {
 
 
 // load form file
-function serialize()
-{
+function serialize() {
     var data;
     try {
         data = fs.readFileSync(fileNameOfDump, 'utf8');
     } catch (err) {
-        log.error('Error load dumpHash', err);
+        log.error('Error load dump', err);
         return false;
     }
 
     try {
         dump = JSON.parse(data);
     } catch (err){
-        log.error('Error parsing dumpHash', err);
+        log.error('Error parsing dump', err);
         return false;
     }
 
@@ -107,14 +127,15 @@ function deserialize()
         fs.writeFileSync(fileNameOfDump, JSON.stringify(dump,null,4),'utf8');
     } catch (err){
         log.error('Error write dumpHash file', err);
-        return err;
+        return false;
     }
 
-    return null;
+    return true;
 }
 
 
 exports.dumpList = dump;
+exports.changeStep = changeStep;
 exports.getDumpListByDir = getDumpListByDir;
 exports.getByHash = getDumpByHash;
 exports.removeDumpByHash = removeDumpByHash;

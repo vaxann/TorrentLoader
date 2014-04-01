@@ -1,6 +1,6 @@
 var Watcher = require('./watcher');
 var Worker = require('./worker');
-var dump = require('./worker/dump');
+var Dump = require('./worker/dump');
 var log = require('./log')(module);
 var config = require('./config');
 
@@ -10,7 +10,7 @@ log.info('Starting app');
 
 var jobs = config.get('jobs');
 
-function addWorker(watcher, transmission, job, newFile) {
+function addWorker(watcher, transmission, job, newFile, dump) {
     watcher.LocFile(newFile);
 
     var worker = new Worker(transmission, job, newFile);
@@ -34,8 +34,9 @@ function addWorker(watcher, transmission, job, newFile) {
 }
 
 //restore dumpHash
-dump.init();
+Dump.init();
 
+//set configured watchers
 jobs.forEach(function(job) {
     var watcher = new Watcher(job, fileMask);
     var transmission = null;
@@ -46,6 +47,12 @@ jobs.forEach(function(job) {
         transmission = config.get('transmission');
 
     // add works from old session
+    var dumpList = Dump.getDumpListByDir(job.watchDir);
+    if (dumpList) {
+        dumpList.forEach(function(dump) {
+            addWorker(watcher, transmission, job, dump.file, dump);
+        });
+    }
 
 
     // if error reading dir
@@ -56,6 +63,6 @@ jobs.forEach(function(job) {
     // if added new file
     watcher.on('NewFile', function(newFile){
         log.info('Add new download:',newFile);
-        addWorker(watcher, transmission, job, newFile);
+        addWorker(watcher, transmission, job, newFile, null);
     });
 });
