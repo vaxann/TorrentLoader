@@ -25,7 +25,7 @@ function push(step, file, hash, callback) // step - stage of addition torrent
             callback(null, obj);
         });
     } else {
-        callback('File '+file+' already added to dump');
+        callback(null, oldObj);
     }
 }
 
@@ -131,7 +131,13 @@ function serialize(callback) {
 // save to file
 function deserialize(callback)
 {
-    fs.writeFile(fileNameOfDump, JSON.stringify(dumpList,null,4),'utf8', callback);
+    log.debug('Writing to file', fileNameOfDump, JSON.stringify(dumpList,null,4));
+    fs.writeFile(fileNameOfDump, JSON.stringify(dumpList,null,4),'utf8',
+        function(err) {
+           if (err) log.debug('Error writing file', err);
+           callback(err);
+        }
+    );
 }
 
 
