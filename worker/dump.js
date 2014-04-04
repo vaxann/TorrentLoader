@@ -11,6 +11,7 @@ var dumpList = [];
 // add to end of file
 function push(step, file, hash, callback) // step - stage of addition torrent
 {
+    debug;
     var obj = {step: step, file: file, hash: hash};
 
     var oldObj = getDumpByHash(hash);
@@ -131,7 +132,7 @@ function serialize(callback) {
 // save to file
 function deserialize(callback)
 {
-    log.debug('Writing to file', fileNameOfDump, JSON.stringify(dumpList,null,4));
+    debug;
     fs.writeFile(fileNameOfDump, JSON.stringify(dumpList,null,4),'utf8',
         function(err) {
            if (err) log.debug('Error writing file', err);

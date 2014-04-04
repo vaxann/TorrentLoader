@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="d190392d-5319-4030-a7b3-fbe413a0d7f4" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/worker/dump.js" afterPath="$PROJECT_DIR$/worker/dump.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/worker/index.js" afterPath="$PROJECT_DIR$/worker/index.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="TorrentLoader.iws" />
@@ -95,8 +96,8 @@
           <file leaf-file-name="index.js" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/worker/index.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="1566" max-vertical-offset="3570">
-                  <caret line="131" column="0" selection-start-line="131" selection-start-column="0" selection-end-line="131" selection-end-column="0" />
+                <state vertical-scroll-proportion="0.0" vertical-offset="1644" max-vertical-offset="3587">
+                  <caret line="106" column="22" selection-start-line="106" selection-start-column="16" selection-end-line="106" selection-end-column="22" />
                   <folding />
                 </state>
               </provider>
@@ -105,8 +106,8 @@
           <file leaf-file-name="dump.js" pinned="false" current="true" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/worker/dump.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="3.5533834" vertical-offset="0" max-vertical-offset="2669">
-                  <caret line="139" column="6" selection-start-line="139" selection-start-column="6" selection-end-line="139" selection-end-column="6" />
+                <state vertical-scroll-proportion="0.6421053" vertical-offset="1851" max-vertical-offset="2686">
+                  <caret line="134" column="10" selection-start-line="134" selection-start-column="10" selection-end-line="134" selection-end-column="10" />
                   <folding />
                 </state>
               </provider>
@@ -417,7 +418,11 @@
       <created>1396616174397</created>
       <updated>1396616174397</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="add debug messages">
+      <created>1396618412897</created>
+      <updated>1396618412897</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TodoView" selected-index="4">
@@ -494,7 +499,8 @@
     <MESSAGE value="Add dump" />
     <MESSAGE value="Make dump async" />
     <MESSAGE value="Small architect changes" />
-    <option name="LAST_COMMIT_MESSAGE" value="Small architect changes" />
+    <MESSAGE value="add debug messages" />
+    <option name="LAST_COMMIT_MESSAGE" value="add debug messages" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -894,16 +900,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/worker/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1566" max-vertical-offset="3570">
-          <caret line="131" column="0" selection-start-line="131" selection-start-column="0" selection-end-line="131" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="1644" max-vertical-offset="3587">
+          <caret line="106" column="22" selection-start-line="106" selection-start-column="16" selection-end-line="106" selection-end-column="22" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/worker/dump.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="3.5533834" vertical-offset="0" max-vertical-offset="2669">
-          <caret line="139" column="6" selection-start-line="139" selection-start-column="6" selection-end-line="139" selection-end-column="6" />
+        <state vertical-scroll-proportion="0.6421053" vertical-offset="1851" max-vertical-offset="2686">
+          <caret line="134" column="10" selection-start-line="134" selection-start-column="10" selection-end-line="134" selection-end-column="10" />
           <folding />
         </state>
       </provider>
