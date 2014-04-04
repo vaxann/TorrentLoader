@@ -29,7 +29,6 @@ function addWorker(watcher, transmission, job, newFile, dump) {
 
     worker.on('DownloadCompleted', function (file) {
         log.info('Torrent %s downloaded', file);
-        worker.MakeCMD();
     });
 
     worker.on('MakeCmdCompleted', function (stdout) {

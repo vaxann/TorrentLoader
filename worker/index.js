@@ -89,6 +89,7 @@ function Worker(transmission, job, file, dump) {
                     Dump.removeDumpByHash(Worker.infoHash, function(err){
                         if (err) return Worker.Error(err);
                         Worker.DownloadCompleted(Worker.file);
+                        Worker.MakeCMD();
                     });
                 } else {
                     log.debug("Download uncompleted")
