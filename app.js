@@ -13,7 +13,7 @@ var jobs = config.get('jobs');
 function addWorker(watcher, transmission, job, newFile, dump) {
     watcher.LocFile(newFile);
 
-    var worker = new Worker(transmission, job, newFile);
+    var worker = new Worker(transmission, job, newFile, dump);
 
     worker.on('Error', function (err) {
         log.error('Error with executing command in transmission:', err);
@@ -29,40 +29,47 @@ function addWorker(watcher, transmission, job, newFile, dump) {
 
     worker.on('DownloadCompleted', function (file) {
         log.info('Torrent %s downloaded', file);
+        worker.MakeCMD();
+    });
+
+    worker.on('MakeCmdCompleted', function (stdout) {
+        log.info('CompleteCMD executed', stdout);
         worker = null;
     });
 }
 
 //restore dumpHash
-Dump.init();
+Dump.init(function(err) {
+    if (err) log.error('Init dump err:', err);
 
-//set configured watchers
-jobs.forEach(function(job) {
-    var watcher = new Watcher(job, fileMask);
-    var transmission = null;
+    //set configured watchers
+    jobs.forEach(function(job) {
+        var watcher = new Watcher(job, fileMask);
+        var transmission = null;
 
-    if (job.transmission != null)
-        transmission = job.transmission;
-    else
-        transmission = config.get('transmission');
+        if (job.transmission != null)
+            transmission = job.transmission;
+        else
+            transmission = config.get('transmission');
 
-    // add works from old session
-    var dumpList = Dump.getDumpListByDir(job.watchDir);
-    if (dumpList) {
-        dumpList.forEach(function(dump) {
-            addWorker(watcher, transmission, job, dump.file, dump);
+        // add works from old session
+        var dumpList = Dump.getDumpListByDir(job.watchDir);
+        if (dumpList) {
+            dumpList.forEach(function(dump) {
+                addWorker(watcher, transmission, job, dump.file, dump);
+            });
+        }
+
+        // if error reading dir
+        watcher.on('Error', function(err){
+            log.error('Error in watching for dir:', err);
         });
-    }
 
-
-    // if error reading dir
-    watcher.on('Error', function(err){
-        log.error('Error in watching for dir:', err);
-    });
-
-    // if added new file
-    watcher.on('NewFile', function(newFile){
-        log.info('Add new download:',newFile);
-        addWorker(watcher, transmission, job, newFile, null);
+        // if added new file
+        watcher.on('NewFile', function(newFile){
+            log.info('Add new download:',newFile);
+            addWorker(watcher, transmission, job, newFile, null);
+        });
     });
 });
+

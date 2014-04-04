@@ -1,65 +1,73 @@
 var fs = require('fs');
 var path = require('path');
+var async = require('async');
 var log = require('../log')(module);
 
-var fileNameOfDump = path.join(__dirname, 'dump.json');
+var fileNameOfDump = path.join(path.dirname(__dirname), 'dump.json');
 var dumpHash = {};
-var dumpDir = {};
-var dump = [];
+var dumpListByDir = {};
+var dumpList = [];
 
 // add to end of file
-function push(step, file, hash) // step - stage of addition torrent
+function push(step, file, hash, callback) // step - stage of addition torrent
 {
     var obj = {step: step, file: file, hash: hash};
 
     var oldObj = getDumpByHash(hash);
     if (oldObj == null) {
-        dump.push(obj);
+        dumpList.push(obj);
 
-        rebuildIndexes();
-
-        deserialize();
-
-        return obj;
+        async.parallel([
+            rebuildIndexes,
+            deserialize
+        ],function(err){
+            if (err) return callback(err);
+            callback(null, obj);
+        });
     } else {
-        log.debug("File already added to dump", file);
-        return oldObj;
+        callback('File '+file+' already added to dump');
     }
 }
 
 
-function changeStep(hash, step){
+function changeStep(hash, step, callback){
     var obj = getDumpByHash(hash);
     if (obj) {
         obj.step = step;
 
-        deserialize();
-    }
-}
-
-
-// first ini dumpHash module
-function rebuildIndexes() {
-    dumpHash = {};
-    dumpDir = {};
-
-    if (dump) {
-        dump.forEach(function (obj) {
-            dumpHash[obj.hash] = obj;
-
-            var dir = path.dirname(obj.file);
-            if (!dir in dumpDir) dumpDir[dir] = [];
-            dumpDir[dir].push(obj);
+        deserialize(function(err){
+            if (err) return callback(err);
+            callback(null, obj);
         });
     }
 }
 
-// first init
-function init(){
-    if (serialize()) {
-        //make dumpHash and dumpDir
-        rebuildIndexes();
+
+function rebuildIndexes(callback) {
+    dumpHash = {};
+    dumpListByDir = {};
+
+    if (dumpList) {
+        async.each(dumpList, function(obj,callback) {
+            dumpHash[obj.hash] = obj;
+
+            var dir = path.dirname(obj.file);
+            if (!dir in dumpListByDir) dumpListByDir[dir] = [];
+            dumpListByDir[dir].push(obj);
+
+            callback();
+        }, callback);
+    } else {
+        callback('Error dump is null');
     }
+}
+
+// first init
+function init(callback){
+    async.waterfall([
+            serialize,
+            rebuildIndexes
+        ],callback);
 }
 
 //
@@ -72,69 +80,62 @@ function getDumpByHash(hash){
 }
 
 function getDumpListByDir(dir){
-    if (dir in dumpDir) {
-        return dumpDir[dir];
+    if (dir in dumpListByDir) {
+        return dumpListByDir[dir];
     } else {
         return null;
     }
 }
 
 
-function removeDumpByHash(hash) {
+function removeDumpByHash(hash, callback) {
     if (hash in dumpHash) {
         var obj = dumpHash[hash];
 
-        var index = dump.indexOf(obj);
-        if (index >= 0) dump.splice(index, 1);
+        var index = dumpList.indexOf(obj);
+        if (index >= 0) dumpList.splice(index, 1);
 
-        rebuildIndexes();
-
-        deserialize();
-
-        return true;
+        async.parallel([
+            rebuildIndexes,
+            deserialize
+        ],callback);
     } else {
-        return false;
+        callback('Error removeDumpByHash, can\'t find hash');
     }
 }
 
 
 
 // load form file
-function serialize() {
-    var data;
-    try {
-        data = fs.readFileSync(fileNameOfDump, 'utf8');
-    } catch (err) {
-        log.error('Error load dump', err);
-        return false;
-    }
+function serialize(callback) {
+    async.waterfall([
+            function(callback){ //reading file
+                fs.readFile(fileNameOfDump,'utf8',function(err, data){
+                    if (err) return callback(err);
 
-    try {
-        dump = JSON.parse(data);
-    } catch (err){
-        log.error('Error parsing dump', err);
-        return false;
-    }
-
-    return true;
+                    callback(null,data);
+                });
+            },
+            function(data, callback){ //parsing file data to object
+                try {
+                    dumpList = JSON.parse(data);
+                } catch (err){
+                    return callback(err);
+                }
+                callback(null);
+            }
+        ],callback);
 }
 
 
 // save to file
-function deserialize()
+function deserialize(callback)
 {
-    try{
-        fs.writeFileSync(fileNameOfDump, JSON.stringify(dump,null,4),'utf8');
-    } catch (err){
-        log.error('Error write dumpHash file', err);
-        return false;
-    }
-
-    return true;
+    fs.writeFile(fileNameOfDump, JSON.stringify(dumpList,null,4),'utf8', callback);
 }
 
 
-exports.dumpList = dump;
+exports.dumpList = dumpList;
 exports.changeStep = changeStep;
 exports.getDumpListByDir = getDumpListByDir;
 exports.getByHash = getDumpByHash;
