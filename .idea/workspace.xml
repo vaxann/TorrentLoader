@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d190392d-5319-4030-a7b3-fbe413a0d7f4" name="Default" comment="">
+    <list default="true" id="d190392d-5319-4030-a7b3-fbe413a0d7f4" name="Default" comment="add debugger labels">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/worker/dump.js" afterPath="$PROJECT_DIR$/worker/dump.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/worker/index.js" afterPath="$PROJECT_DIR$/worker/index.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="TorrentLoader.iws" />
@@ -93,21 +92,21 @@
       </split-first>
       <split-second>
         <leaf>
-          <file leaf-file-name="index.js" pinned="false" current="true" current-in-tab="true">
+          <file leaf-file-name="index.js" pinned="false" current="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/worker/index.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.46978852" vertical-offset="1491" max-vertical-offset="3587">
+                <state vertical-scroll-proportion="0.0" vertical-offset="2409" max-vertical-offset="3587">
                   <caret line="106" column="25" selection-start-line="106" selection-start-column="25" selection-end-line="106" selection-end-column="25" />
                   <folding />
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="dump.js" pinned="false" current="false" current-in-tab="false">
+          <file leaf-file-name="dump.js" pinned="false" current="true" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/worker/dump.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2686">
-                  <caret line="11" column="30" selection-start-line="11" selection-start-column="30" selection-end-line="11" selection-end-column="30" />
+                <state vertical-scroll-proportion="0.42074075" vertical-offset="430" max-vertical-offset="2703">
+                  <caret line="42" column="5" selection-start-line="42" selection-start-column="5" selection-end-line="42" selection-end-column="5" />
                   <folding />
                 </state>
               </provider>
@@ -165,8 +164,8 @@
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/dump/index.js" />
         <option value="$PROJECT_DIR$/app.js" />
-        <option value="$PROJECT_DIR$/worker/dump.js" />
         <option value="$PROJECT_DIR$/worker/index.js" />
+        <option value="$PROJECT_DIR$/worker/dump.js" />
       </list>
     </option>
   </component>
@@ -426,7 +425,11 @@
       <created>1396619733752</created>
       <updated>1396619733752</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="add debugger labels">
+      <created>1396621051999</created>
+      <updated>1396621051999</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TodoView" selected-index="4">
@@ -505,7 +508,8 @@
     <MESSAGE value="Small architect changes" />
     <MESSAGE value="add debug messages" />
     <MESSAGE value="add debug labels" />
-    <option name="LAST_COMMIT_MESSAGE" value="add debug labels" />
+    <MESSAGE value="add debugger labels" />
+    <option name="LAST_COMMIT_MESSAGE" value="add debugger labels" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -903,18 +907,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/worker/dump.js">
+    <entry file="file://$PROJECT_DIR$/worker/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2686">
-          <caret line="11" column="30" selection-start-line="11" selection-start-column="30" selection-end-line="11" selection-end-column="30" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="2409" max-vertical-offset="3587">
+          <caret line="106" column="25" selection-start-line="106" selection-start-column="25" selection-end-line="106" selection-end-column="25" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/worker/index.js">
+    <entry file="file://$PROJECT_DIR$/worker/dump.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.46978852" vertical-offset="1491" max-vertical-offset="3587">
-          <caret line="106" column="25" selection-start-line="106" selection-start-column="25" selection-end-line="106" selection-end-column="25" />
+        <state vertical-scroll-proportion="0.42074075" vertical-offset="430" max-vertical-offset="2703">
+          <caret line="42" column="5" selection-start-line="42" selection-start-column="5" selection-end-line="42" selection-end-column="5" />
           <folding />
         </state>
       </provider>

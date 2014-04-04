@@ -50,6 +50,7 @@ function rebuildIndexes(callback) {
 
     if (dumpList) {
         async.each(dumpList, function(obj,callback) {
+            debugger;
             dumpHash[obj.hash] = obj;
 
             var dir = path.dirname(obj.file);
