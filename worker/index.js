@@ -104,7 +104,7 @@ function Worker(transmission, job, file, dump) {
             if (dump) return callback(null, dump.hash);
 
             nt.read(Worker.file, function(err,torrent) {
-                debug;
+                debugger;
                 //log.debug('Response to checking torrent:', arguments);
                 if (err) return callback(err);
 
