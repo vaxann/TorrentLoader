@@ -45,18 +45,18 @@ function changeStep(hash, step, callback){
 
 
 function rebuildIndexes(callback) {
-    debugger;
+
     dumpHash = {};
     dumpListByDir = {};
 
     if (dumpList) {
         async.each(dumpList, function(obj,callback) {
-
+            debugger;
             dumpHash[obj.hash] = obj;
 
             var dir = path.dirname(obj.file);
             if (!dir in dumpListByDir) dumpListByDir[dir] = [];
-            dumpListByDir[dir].push(obj);
+            //dumpListByDir[dir].push(obj);
 
             callback();
         }, callback);
