@@ -55,8 +55,10 @@ function rebuildIndexes(callback) {
             dumpHash[obj.hash] = obj;
 
             var dir = path.dirname(obj.file);
-            if (!dir in dumpListByDir) dumpListByDir[dir] = [];
-            //dumpListByDir[dir].push(obj);
+            if (dir in dumpListByDir)
+                dumpListByDir[dir] = [obj];
+            else
+                dumpListByDir[dir].push(obj);
 
             callback();
         }, callback);
@@ -135,12 +137,7 @@ function serialize(callback) {
 function deserialize(callback)
 {
     debugger;
-    fs.writeFile(fileNameOfDump, JSON.stringify(dumpList,null,4),'utf8',
-        function(err) {
-           if (err) log.debug('Error writing file', err);
-           callback(err);
-        }
-    );
+    fs.writeFile(fileNameOfDump, JSON.stringify(dumpList,null,4),'utf8',callback);
 }
 
 
