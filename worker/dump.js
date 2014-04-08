@@ -56,9 +56,10 @@ function rebuildIndexes(callback) {
 
             var dir = path.dirname(obj.file);
             if (dir in dumpListByDir)
-                dumpListByDir[dir] = [obj];
-            else
                 dumpListByDir[dir].push(obj);
+            else
+                dumpListByDir[dir] = [obj];
+
 
             callback();
         }, callback);
