@@ -38,9 +38,17 @@ else
   exit 1;
 fi
 
-echo "Copy app to /usr/bin/torrentloader/..."
+echo "Downloading app from github..."
+mkdir /tmp/torrentloader
+wget -P /tmp/torrentloader https://github.com/vaxann/TorrentLoader/archive/master.zip
+
+echo "Unpackind app in /usr/bin/torrentloader/..."
+mkdir /usr/bin/torrentloader
+unzip /tmp/torrentloader/master.zip -d /usr/bin/torrentloader
 
 echo "Copy config to /etc/torrentloader/config.json"
+mkdir /etc/torrentloader/
+mv /usr/bin/torrentloader/*.json /etc/torrentloader/
 
 echo "Registring service..."
 

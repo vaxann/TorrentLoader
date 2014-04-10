@@ -2,13 +2,13 @@
     "transmission": {
         "host" : "localhost",
         "port" : 9091,
-        "auth" : "ivanabramenko:frtgbfrtgb"
+        "auth" : "ivan:1234"
     },
     "jobs": [
         {
             "name": "TV Shows",
             "checkFrequency": 1,
-            "watchDir": "C:\\Users\\aim.MONITEL\\Dropbox\\Torrents\\TV Shows",
+            "watchDir": "/user/ivan/torrentloader/tvshows",
             "downloadDir": "C:\\",
             "completeCMD" : ""
         }
