@@ -20,11 +20,7 @@ start() {
 stop() {
     if [ -f $PIDFILE ]; then
         echo "Shutting down $NAME"
-        # Tell Forever to stop the process. Note that doing it this way means
-        # that each application that runs as a service must have a different
-        # start file name, regardless of which directory it is in.
         forever stop $APPLICATION_START
-        # Get rid of the pidfile, since Forever won't do that.
         rm -f $PIDFILE
         RETVAL=$?
     else
@@ -41,13 +37,6 @@ restart() {
 
 status() {
     echo "Status for $NAME:"
-    # This is taking the lazy way out on status, as it will return a list of
-    # all running Forever processes. You get to figure out what you want to
-    # know from that information.
-    #
-    # On Ubuntu, this isn't even necessary. To find out whether the service is
-    # running, use "service my-application status" which bypasses this script
-    # entirely provided you used the service utility to start the process.
     forever list | grep "$NAME"
     RETVAL=$?
 }
