@@ -8,5 +8,5 @@ TorrentLoader
 
 
 Installation for Ubuntu:
-`sudo curl https://raw.githubusercontent.com/vaxann/TorrentLoader/master/install/install.sh | sh`
+`sudo curl https://raw.githubusercontent.com/vaxann/TorrentLoader/master/install/install.sh | bash`
 

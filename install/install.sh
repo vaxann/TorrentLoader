@@ -42,16 +42,22 @@ echo "Downloading app from github..."
 mkdir /tmp/torrentloader
 wget -P /tmp/torrentloader https://github.com/vaxann/TorrentLoader/archive/master.zip
 
-echo "Unpackind app in /usr/bin/torrentloader/..."
-mkdir /usr/bin/torrentloader
-unzip /tmp/torrentloader/master.zip -d /usr/bin/torrentloader
+echo "Unpackind app..."
+unzip /tmp/torrentloader/master.zip -d /tmp/torrentloader/
 
 echo "Copy config to /etc/torrentloader/config.json"
 mkdir /etc/torrentloader/
-mv /usr/bin/torrentloader/*.json /etc/torrentloader/
+mv /tmp/torrentloader/TorrentLoader-master/config/*.json /etc/torrentloader/
+
+echo "Copy app to /usr/bin/torrentloader/..."
+mkdir /usr/bin/torrentloader
+mv /tmp/torrentloader/TorrentLoader-master /usr/bin/torrentloader
+
+echo "Cleaning up..."
+rm -r -f /tmp/torrentloader
 
 echo "Registring service..."
 
-echo "Starting service: ..."
+echo "Starting service..."
 
 echo "Edit config /etc/torrentloader/config.json file and restart service"
