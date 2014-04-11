@@ -51,7 +51,7 @@ mv /tmp/torrentloader/TorrentLoader-master/config/*.json /etc/torrentloader/
 
 echo "Copy app to /usr/bin/torrentloader/..."
 mkdir /usr/bin/torrentloader
-mv /tmp/torrentloader/TorrentLoader-master/* /usr/bin/torrentloader/
+mv /tmp/torrentloader/TorrentLoader-master/* /usr/bin/torrentloader/*
 
 echo "Cleaning up..."
 rm -r -f /tmp/torrentloader
