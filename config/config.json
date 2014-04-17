@@ -10,7 +10,18 @@
             "checkFrequency": 1,
             "watchDir": "/user/ivan/torrentloader/tvshows",
             "downloadDir": "C:\\",
-            "completeCMD" : ""
+            "completes_actions" : [
+                {
+                    "moduleName" : "transfer_action",
+                    "params" : [
+                        "if",
+                        "ratio",
+                        "eq",
+                        1,
+                        "pause"
+                    ]
+                }
+            ]
         }
     ]
 }

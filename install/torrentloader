@@ -13,7 +13,7 @@ start() {
 
     forever --pidFile $PIDFILE --sourceDir $APPLICATION_DIRECTORY \
         -a -l $LOGFILE --minUptime 5000 --spinSleepTime 2000 \
-        start $APPLICATION_START &
+        start $APPLICATION_START
     RETVAL=$?
 }
 

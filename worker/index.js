@@ -49,17 +49,21 @@ function Worker(transmission, job, file, dump) {
 
 
     Worker.MakeCMD = function(){
-        if (job.completeCMD){
-            exec(job.completeCMD,
-                function (error, stdout, stderr) {
-                    if (error)  Worker.Error(util.format('Error with completeCMD: %j', error));
-                    if (stderr) Worker.Error(util.format('Error with completeCMD: %j', stderr));
+        if (job.completes_actions){
+            async.eachSeries(job.completes_actions,
+                function(action, callback) {
+                    var Actor = require('./completes_actions/'+action.moduleName);
 
-                    Worker.MakeCmdCompleted(stdout);
+                    var actor = new Actor(transmission, action.params);
+
+                    actor.exec(callback);
+                },
+                function(err){
+                    if (err)  Worker.Error(util.format('Error with completes_actions: %j', err));
+
+                    Worker.MakeCmdCompleted();
                 }
             );
-        } else {
-            Worker.MakeCmdCompleted();
         }
     };
 
