@@ -13,11 +13,12 @@
             "completes_actions" : [
                 {
                     "moduleName" : "transfer_action",
-                    "params" : [
-                        "if",
-                        "ratio",
-                        "eq",
-                        1,
+                    "condition": {
+                        "param" : "ratio",
+                        "operation" : "eq",
+                        "value" : 1
+                    },
+                    "actions" : [
                         "pause"
                     ]
                 }

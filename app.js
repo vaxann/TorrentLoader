@@ -31,8 +31,8 @@ function addWorker(watcher, transmission, job, newFile, dump) {
         log.info('Torrent %s downloaded', file);
     });
 
-    worker.on('MakeCmdCompleted', function (stdout) {
-        log.info('CompleteCMD executed', stdout);
+    worker.on('CompletesActionsDone', function (file) {
+        log.info('All Actions executed for torrent', file);
         worker = null;
     });
 }

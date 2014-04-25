@@ -41,27 +41,30 @@ function Worker(transmission, job, file, dump) {
         Worker.emit('DownloadCompleted', file);
     };
 
-    // MakeCmdCompleted Event
-    Worker.MakeCmdCompleted = function(stdout) {
-        log.debug("MakeCmdCompleted function called, emitting MakeCmdCompleted event with argument = ", arguments);
-        Worker.emit('MakeCmdCompleted', stdout);
+    // CompletesActionsDone Event
+    Worker.CompletesActionsDone = function(file) {
+        log.debug("CompletesActionsDone function called, emitting CompletesActionsDone event with argument = ", arguments);
+        Worker.emit('CompletesActionsDone', file);
     };
 
 
-    Worker.MakeCMD = function(){
-        if (job.completes_actions){
+    Worker.StartCompletesActions = function(){
+        if (job.completes_actions.length){
             async.eachSeries(job.completes_actions,
                 function(action, callback) {
                     var Actor = require('./completes_actions/'+action.moduleName);
 
-                    var actor = new Actor(transmission, action.params);
+                    var actor = new Actor(transmission, dump, action.condition, action.actions);
 
                     actor.exec(callback);
                 },
                 function(err){
                     if (err)  Worker.Error(util.format('Error with completes_actions: %j', err));
 
-                    Worker.MakeCmdCompleted();
+                    Dump.removeDumpByHash(Worker.infoHash, function(err){
+                        if (err) return Worker.Error(err);
+                        Worker.CompletesActionsDone(Worker.file);
+                    });
                 }
             );
         }
@@ -90,13 +93,14 @@ function Worker(transmission, job, file, dump) {
                 if (match != null && match.length > 1 && match[1] == '100'){
                     clearInterval(Worker.intervalObject);
 
-                    Dump.removeDumpByHash(Worker.infoHash, function(err){
-                        if (err) return Worker.Error(err);
+                    Dump.changeStep(Worker.infoHash, 4, function(err, obj) {
+                        if (err) return Worker.Error(util.format('Error with saving dump: %j', err));
+                        dump = obj;
                         Worker.DownloadCompleted(Worker.file);
-                        Worker.MakeCMD();
+                        Worker.StartCompletesActions();
                     });
                 } else {
-                    log.debug("Download uncompleted")
+                    log.debug("Download uncompleted");
                 }
             }
         );
@@ -194,7 +198,7 @@ function Worker(transmission, job, file, dump) {
     ],
         function(err, infoHash) { //step = 4; in the end set timer and wait while torrent will be download
             if (err) return Worker.Error(err);
-
+            if (dump && dump.step >= 4 ) return Worker.StartCompletesActions();
 
             Worker.infoHash = infoHash;
             Worker.intervalObject = setInterval(Worker.CheckDownloadState, 30000);

@@ -1,0 +1,16 @@
+{
+    "actions": {
+        "stop": {
+            "req": "transmission-remote %s:%d --auth=%s --torrent %s --stop",
+            "res": "",
+            "success" : "success"
+        },
+        "remove": {
+            "req": "transmission-remote %s:%d --auth=%s --torrent %s --stop",
+            "res": ""
+        }
+    },
+   "getParams": {
+
+   }
+}

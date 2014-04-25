@@ -137,7 +137,6 @@ function serialize(callback) {
 // save to file
 function deserialize(callback)
 {
-    debugger;
     fs.writeFile(fileNameOfDump, JSON.stringify(dumpList,null,4),'utf8',callback);
 }
 
