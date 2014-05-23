@@ -2,15 +2,19 @@
     "actions": {
         "stop": {
             "req": "transmission-remote %s:%d --auth=%s --torrent %s --stop",
-            "res": "",
+            "res": "responded: \"(\\w*)\"",
             "success" : "success"
         },
         "remove": {
             "req": "transmission-remote %s:%d --auth=%s --torrent %s --stop",
-            "res": ""
+            "res": "responded: \"(\\w*)\"",
+            "success" : "success"
         }
     },
    "getParams": {
-
+       "ratio": {
+           "req": "transmission-remote %s:%d --auth=%s --torrent %s --stop",
+           "res": "responded: \"(\\w*)\""
+       }
    }
 }

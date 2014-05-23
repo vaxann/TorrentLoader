@@ -19,16 +19,16 @@ function Actor(transmission, dump, condition, actions) {
                     transmission.auth,
                     dump.hash);
 
-                // TODO: load mask
-                var res = actionData.actions[action].res;
+                var res = new RegExp(actionData.actions[action].res, 'gi');
+
 
                 exec(req,
                     function (error, stdout, stderr) {
-                        log.debug("Response to changing dir:", arguments);
+                        log.debug("Execked command:", arguments);
                         if (error)  return callback(util.format('Error with action: %j', error));
                         if (stderr) return callback(util.format('Error with action: %j', stderr));
 
-                        var match = checkDownloadStateRes.exec(stdout);
+                        var match = res.exec(stdout);
                         log.debug("Results of exec regexp to action response: match =", match);
 
                         if (match != null && match.length > 1 && match[1] == actionData.actions[action].success){
@@ -41,24 +41,48 @@ function Actor(transmission, dump, condition, actions) {
     };
 
     Actor.getParam = function(param, callback) {
-
+        
     };
 
     Actor.exec = function(callback){
+        if (!actions) return callback('Error: nothing to do');
+
         if (condition) {
+            var paramValue = null;
+            async.doUntil(
+                function(callback) { // Work function
+                    Actor.getParam(condition.param, function(err, value){
+                        if (err) return callbak(err);
 
+                        paramValue = value;
+                        setTimeout(callback, 30000);
+                    });
+                },
+                function() { // Check function
+                    if (paramValue == '='){
+                        return (paramValue == condition.value);
+                    } else if (paramValue == '>') {
+                        return (paramValue > condition.value);
+                    } else if (paramValue == '>=') {
+                        return (paramValue >= condition.value);
+                    } else if (paramValue == '<') {
+                        return (paramValue < condition.value);
+                    } else if (paramValue == '<=') {
+                        return (paramValue <= condition.value);
+                    } else if (paramValue == '!=') {
+                        return (paramValue != condition.value);
+                    } else {
+                        return false;
+                    }
+                },
+                function(err){
+                    if (err) return callback(err);
 
+                    Actor.execCommands(actions, callback);
+                }
+            );
         } else {
             Actor.execCommands(actions, callback);
-        }
-
-        //var setInterval(Worker.CheckDownloadState, 30000);
-
-        //setInterval
-        for (var i=0; i < params.length; i++){
-            if (params[i] == 'if') {
-
-            }
         }
     };
 }

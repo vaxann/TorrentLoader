@@ -1,8 +1,10 @@
 {
-    "transmission": {
+    "server": {
+        "client" : "transmission",
         "host" : "localhost",
         "port" : 9091,
-        "auth" : "ivan:1234"
+        "user" : "ivan",
+        "password" : "123"
     },
     "jobs": [
         {
@@ -15,7 +17,7 @@
                     "moduleName" : "transfer_action",
                     "condition": {
                         "param" : "ratio",
-                        "operation" : "eq",
+                        "operation" : ">=",
                         "value" : 1
                     },
                     "actions" : [
