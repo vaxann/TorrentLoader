@@ -1,6 +1,6 @@
 {
     "server": {
-        "client" : "transmission",
+        "application" : "transmission",
         "host" : "localhost",
         "port" : 9091,
         "user" : "ivan",

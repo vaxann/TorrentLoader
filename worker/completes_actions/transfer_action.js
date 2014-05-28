@@ -59,17 +59,17 @@ function Actor(transmission, dump, condition, actions) {
                     });
                 },
                 function() { // Check function
-                    if (paramValue == '='){
+                    if (condition.operation == '='){
                         return (paramValue == condition.value);
-                    } else if (paramValue == '>') {
+                    } else if (condition.operation == '>') {
                         return (paramValue > condition.value);
-                    } else if (paramValue == '>=') {
+                    } else if (condition.operation == '>=') {
                         return (paramValue >= condition.value);
-                    } else if (paramValue == '<') {
+                    } else if (condition.operation == '<') {
                         return (paramValue < condition.value);
-                    } else if (paramValue == '<=') {
+                    } else if (condition.operation == '<=') {
                         return (paramValue <= condition.value);
-                    } else if (paramValue == '!=') {
+                    } else if (condition.operation == '!=') {
                         return (paramValue != condition.value);
                     } else {
                         return false;
