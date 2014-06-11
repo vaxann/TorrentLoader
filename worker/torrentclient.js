@@ -12,12 +12,16 @@ function TorrentClient(server){
         TorrentClient.application = new UTorrent(TorrentClient.server);
     }
 
+    TorrentClient.Init = function(callback) {
+        TorrentClient.application.Init(callback);
+    };
+
     TorrentClient.ChangeDownloadDir = function(dir, callback){
         TorrentClient.application.ChangeDownloadDir(dir, callback);
     };
 
-    TorrentClient.AddTorrent = function(torrentFile, callback){
-        TorrentClient.application.AddTorrent(torrentFile, callback);
+    TorrentClient.AddTorrent = function(torrentFile, dir, callback){
+        TorrentClient.application.AddTorrent(torrentFile, dir, callback);
     };
 
     TorrentClient.CheckDownloadState = function(hash, callback){
