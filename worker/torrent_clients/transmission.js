@@ -28,7 +28,7 @@ function Transmission(server){
         if(!callback || !Type.is(callback, Function))
             return Log.error('Callback in Init can\'t defined');
 
-        Transmission.getRedirectPath(function(err, path){
+        Transmission.getRedirectPath(function(err, path) {
             if (err) return callback(err);
 
             Transmission.uri = path + 'rpc';
@@ -37,13 +37,13 @@ function Transmission(server){
     };
 
     Transmission.ChangeDownloadDir = function(dir, callback, cycle){
+        if(!callback || !Type(callback, Function))
+            return Log.error('Callback in ChangeDownloadDir can\'t defined');
         if(!Transmission.uri || !Type(Transmission.uri, String))
             return callback(new Error('Uri can\'t defined, make Init'));
         if(!dir || !Type(dir, String))
             return callback(new Error('Dir can\'t defined'));
-        if(!callback || !Type(callback, Function))
-            return Log.error('Callback in ChangeDownloadDir can\'t defined');
-        if(!cycle || !Type(cycle, Number))
+        if(Type(cycle,undefined)|| !Type(cycle, Number))
             cycle = 0;
 
         Transmission.options.json = true;
@@ -81,12 +81,6 @@ function Transmission(server){
     // can be 4: (torrentFile, dir, callback, cycle) or 3: (torrentFile, callback, cycle) arguments
     // if you use 3 arguments, then will be used default dir
     Transmission.AddTorrent = function(torrentFile, dir, callback, cycle){
-        if (!torrentFile || !Type(torrentFile,String))
-            return callback(new Error('Torrent file can\'t defined'));
-
-        if (!Fs.existsSync(torrentFile))
-            return callback(new Error(Util.format('Torrent file %s can\'t find'), torrentFile));
-
         if(!callback || !Type(callback, Function)) {
             if (dir && Type(dir, Function)) {
                 cycle = callback;
@@ -97,9 +91,16 @@ function Transmission(server){
                 return Log.error('Callback in AddTorrent can\'t defined');
         }
 
+        if (!torrentFile || !Type(torrentFile,String))
+            return callback(new Error('Torrent file can\'t defined'));
+        if (!Fs.existsSync(torrentFile))
+            return callback(new Error(Util.format('Torrent file %s can\'t find'), torrentFile));
+
+
         if (dir && !Type(dir, String))
             return callback(new Error('Dir file can\'t defined correct'));
-        if(!cycle || !Type(cycle, Number))
+
+        if(Type(cycle,undefined) || !Type(cycle, Number))
             cycle = 0;
 
         Transmission.options.json = true;
@@ -146,27 +147,50 @@ function Transmission(server){
     };
 
     // You can send single hash or array of hashes and return single respond or array of res
-    Transmission.CheckDownloadState = function(hash, callback, cycle, isHashArray) {
+    Transmission.CheckDownloadState = function(hash, callback) {
+        Transmission.GetParam(hash, ['isFinished','percentDone'], callback);
+    };
+
+    // You can send single hash,param or/and array of hashes, params and return single respond or array of res
+    Transmission.GetParam = function(hash, param, callback, cycle, isHashArray, isParamsArray) {
+        if(!callback || !Type(callback, Function))
+            return Log.error('Callback can\'t defined');
+
         if (!hash || !(Type(hash, Array) || Type(hash, String)))
             return callback(new Error('Hash can\'t defined'));
         if (Type(hash, String)) {
             hash = [hash];
             isHashArray = false;
+        } else {
+            if (hash.length <= 0)
+                return callback(new Error('Hash can\'t defined'));
         }
 
-        if(!callback || !Type(callback, Function))
-            return Log.error('Callback can\'t defined');
-        if(!cycle || !Type(cycle,Number))
+        if (!param || !(Type(param,Array) || Type(param,String)))
+            return callback(new Error('Params can\'t defined'));
+        if (Type(param, String)) {
+            param = [param];
+            isParamsArray = false;
+        } else {
+            if (param.length <= 0)
+                return callback(new Error('Param can\'t defined'));
+        }
+
+        if(Type(cycle,undefined) || !Type(cycle,Number))
             cycle = 0;
-        if(!isHashArray || !Type(isHashArray,Boolean))
+
+        if(Type(isHashArray,undefined) || !Type(isHashArray,Boolean))
             isHashArray = true;
+
+        if(Type(isParamsArray,undefined) || !Type(isParamsArray,Boolean))
+            isParamsArray = true;
 
         Transmission.options.json = true;
 
         Transmission.options.body  = JSON.stringify({
             'method':'torrent-get',
             'arguments':{
-                'fields': ['isFinished','percentDone'],
+                'fields': param,
                 'ids': hash}
         });
 
@@ -177,7 +201,7 @@ function Transmission(server){
                 if (cycle > 1) return callback(new Error('Error looping with x-transmission-session-id'));
 
                 Transmission.options.headers = {'x-transmission-session-id' : response.headers['x-transmission-session-id']};
-                return Transmission.CheckDownloadState(hash, callback, cycle+1, isHashArray);
+                return Transmission.GetParam(hash, param, callback, cycle+1, isHashArray, isParamsArray);
             }
 
             if (response.statusCode != 200)
@@ -187,16 +211,32 @@ function Transmission(server){
                 return callback(new Error('Can\'t parse body: '+ body));
 
             if (body.result && body.result == 'success' && body.arguments) {
-                var arg = body.arguments.torrents;
+                var args = body.arguments.torrents;
+
+                if (!args || args.length <= 0 || args.length != hash.length)
+                    return callback(new Error('Response args count can\'t  equal requested hashes'));
+
+                for(var i = 0; i < args.length; i++) {
+                    for(var j= 0; j < param.length; j++)
+                        if (Type(args[i][param[j]],undefined))
+                            return callback(new Error('Cant\'t find requested param '+ param[j]));
+
+                    if (!isParamsArray)
+                        args[i] = args[i][param[0]];
+                }
+
                 if (isHashArray)
-                    callback(null, arg);
+                    callback(null, args);
                 else
-                    callback(null, arg[0]);
+                    callback(null, args[0]);
             } else
-                callback(new Error('Can\'t find torrent data'), body);
+                callback(new Error('Can\'t find torrent data: '+body));
 
         });
+
+
     };
+
 
 
     /// Private functions ///

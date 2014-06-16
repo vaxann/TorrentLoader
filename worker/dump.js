@@ -11,7 +11,6 @@ var dumpList = [];
 // add to end of file
 function push(step, file, hash, callback) // step - stage of addition torrent
 {
-    debugger;
     var obj = {step: step, file: file, hash: hash};
 
     var oldObj = getDumpByHash(hash);
@@ -51,7 +50,6 @@ function rebuildIndexes(callback) {
 
     if (dumpList) {
         async.each(dumpList, function(obj,callback) {
-            debugger;
             dumpHash[obj.hash] = obj;
 
             var dir = path.dirname(obj.file);

@@ -32,8 +32,12 @@ function TorrentClient(server){
         TorrentClient.application.GetParam(hash, param, callback);
     };
 
-    TorrentClient.MakeAction = function(hash, action, callback){
-        TorrentClient.application.MakeAction(hash, action, callback);
+    TorrentClient.SetParam = function(hash, param, value, callback){
+        TorrentClient.application.SetParam(hash, param, value, callback);
+    };
+
+    TorrentClient.RemoveTorrent = function(hash, callback){
+        TorrentClient.application.RemoveTorrent(hash, callback);
     };
 }
 
