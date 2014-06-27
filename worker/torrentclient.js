@@ -29,14 +29,16 @@ function TorrentClient(server){
     };
 
     TorrentClient.GetParam = function(hash, param, callback){
+        //TODO: Add param mapping for anther torrent application
         TorrentClient.application.GetParam(hash, param, callback);
     };
 
     TorrentClient.SetParam = function(hash, param, value, callback){
+        //TODO: Add param mapping for anther torrent application
         TorrentClient.application.SetParam(hash, param, value, callback);
     };
 
-    TorrentClient.RemoveTorrent = function(hash, callback){
+    TorrentClient.RemoveTorrent = function(hash, deleteData, callback){
         TorrentClient.application.RemoveTorrent(hash, callback);
     };
 }

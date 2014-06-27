@@ -238,6 +238,65 @@ function Transmission(server){
     };
 
 
+    Transmission.RemoveTorrent = function(hash, deleteData, callback, cycle, isHashArray) {
+        if(!callback || !Type(callback, Function))
+            return Log.error('Callback in ChangeDownloadDir can\'t defined');
+        if(!Transmission.uri || !Type(Transmission.uri, String))
+            return callback(new Error('Uri can\'t defined, make Init'));
+
+        if (!hash || !(Type(hash, Array) || Type(hash, String)))
+            return callback(new Error('Hash can\'t defined'));
+        if (Type(hash, String)) {
+            hash = [hash];
+            isHashArray = false;
+        } else {
+            if (hash.length <= 0)
+                return callback(new Error('Hash can\'t defined'));
+        }
+
+        if(!Type(deleteData, Boolean))
+            deleteData = false;
+
+        if(Type(cycle,undefined)|| !Type(cycle, Number))
+            cycle = 0;
+
+        if(Type(isHashArray,undefined) || !Type(isHashArray,Boolean))
+            isHashArray = true;
+
+        Transmission.options.json = true;
+
+        Transmission.options.body  = JSON.stringify({
+            'method':'torrent-remove',
+            'arguments':{
+                'delete-local-data':deleteData,
+                'ids': hash}
+        });
+
+
+        Request.post(Transmission.uri, Transmission.options, function(error, response, body){
+            if (error) return callback(error);
+
+            if (response.statusCode == 409 && response.headers['x-transmission-session-id']) {
+                if (cycle > 1) return callback(new Error('Error looping with x-transmission-session-id'));
+
+                Transmission.options.headers = {'x-transmission-session-id' : response.headers['x-transmission-session-id']};
+                return Transmission.RemoveTorrent(hash, deleteData, callback, cycle+1, isHashArray);
+            }
+
+            if (response.statusCode != 200)
+                return callback(new Error('Bad statusCode '+ response.statusCode));
+
+            if (!body || !Type(body,Object))
+                return callback(new Error('Can\'t parse body: '+ body));
+
+            if (body.result && body.result == 'success') {
+                callback();
+            } else
+                callback(new Error('Torrent does not added'), body);
+
+        });
+    };
+
 
     /// Private functions ///
 
@@ -256,7 +315,6 @@ function Transmission(server){
         Request.get(Transmission.uri, Transmission.options, function(error, response, body){
             if (error) return callback(error);
 
-            Log.debug("Status Code", response.statusCode);
             if (response.statusCode < 300 && response.statusCode > 399)
                 return callback(new Error(Util.format('StatusCode=%s not equal 3XX', response.statusCode)));
 
