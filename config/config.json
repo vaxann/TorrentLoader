@@ -1,18 +1,18 @@
 {
     "server": {
         "application" : "transmission",
-        "host" : "localhost",
+        "host" : "25.199.18.121",
         "port" : 9091,
-        "user" : "ivan",
-        "password" : "123"
+        "user" : "tvuser",
+        "password" : "frtgbfrtgb"
     },
     "jobs": [
         {
-            "name": "TV Shows",
-            "checkFrequency": 1,
-            "watchDir": "/user/ivan/torrentloader/tvshows",
-            "downloadDir": "C:\\",
-            "completes_actions" : [
+            "name": "Downloads",
+            "checkFrequency": 5,
+            "watchDir": "test/",
+            "downloadDir": "/Users/tvuser/Downloads",
+            "completesActions" : [
                 {
                     "moduleName" : "transfer_action",
                     "condition": {

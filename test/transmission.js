@@ -116,6 +116,11 @@ transmission.Init(function(err) {
                 console.log('CheckDownloadState returns:');
                 console.log('err =', err);
                 console.log('arg =', arg);
+
+                transmission.RemoveTorrent(hash,true,function(err){
+                    console.log('RemoveTorrent returns: err =', err);
+                });
+
             });
     });
 

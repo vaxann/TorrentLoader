@@ -1,56 +1,66 @@
-var events = require('events');
-var exec = require('child_process').exec;
-var util = require('util');
-var async = require('async');
-var nt = require('nt');
-var log = require('../log')(module);
+var Events = require('events');
+var Util = require('util');
+var Async = require('async');
+var Nt = require('nt');
+var Log = require('../log')(module);
 var Dump = require('./dump');
+var TorrentClient = require('./torrent_client');
+var Type = require('type-of-is');
 
-function Worker(transmission, job, file, dump) {
-    log.debug('Creating object Worker with arguments:', arguments);
+function Worker(server, job, file, dump) {
+    if (!Type(server, Object))
+        throw  Error('Error type of param "server" must be "Object", can\'t add Worker');
+    if (!Type(job, Object))
+        throw  Error('Error type of param "job" must be "Object", can\'t add Worker');
+    if (!Type(file, String))
+        throw  Error('Error type of param "file" must be "String", can\'t add Worker');
+    if (!Type.any(dump, [Object,undefined]))
+        throw  Error('Error type of param "dump" must be "Object" or "Undefined", can\'t add Worker');
+
+    Log.debug('Creating object Worker with arguments:', arguments);
 
     var Worker = this;
 
-    events.EventEmitter.call(Worker);
+    Events.EventEmitter.call(Worker);
 
     Worker.infoHash = null;
-    Worker.intervalObject = null;
     Worker.file = file;
+    Worker.torrentClient = new TorrentClient(server);
 
     // Emit error Event
     Worker.Error = function(err) {
-        log.debug("Error function called, emitting Error event with argument = ", arguments);
+        Log.debug("Error function called, emitting Error event with argument = ", arguments);
         Worker.emit('Error', err);
     };
 
     // Emit ChangedDefDir Event
     Worker.ChangedDefDir = function(dir) {
-        log.debug("ChangedDefDir function called, emitting ChangedDefDir event with argument = ", arguments);
+        Log.debug("ChangedDefDir function called, emitting ChangedDefDir event with argument = ", arguments);
         Worker.emit('ChangedDefDir', dir);
     };
 
     // Emit AddedFile Event
     Worker.AddedFile = function(file) {
-        log.debug("AddedFile function called, emitting AddedFile event with argument = ", arguments);
+        Log.debug("AddedFile function called, emitting AddedFile event with argument = ", arguments);
         Worker.emit('AddedFile', file);
     };
 
     // Emit AddedFile Event
     Worker.DownloadCompleted = function(file) {
-        log.debug("DownloadCompleted function called, emitting DownloadCompleted event with argument = ", arguments);
+        Log.debug("DownloadCompleted function called, emitting DownloadCompleted event with argument = ", arguments);
         Worker.emit('DownloadCompleted', file);
     };
 
     // CompletesActionsDone Event
     Worker.CompletesActionsDone = function(file) {
-        log.debug("CompletesActionsDone function called, emitting CompletesActionsDone event with argument = ", arguments);
+        Log.debug("CompletesActionsDone function called, emitting CompletesActionsDone event with argument = ", arguments);
         Worker.emit('CompletesActionsDone', file);
     };
 
 
     Worker.StartCompletesActions = function(){
-        if (job.completes_actions.length){
-            async.eachSeries(job.completes_actions,
+ /*       if (job.completes_actions.length){
+            Async.eachSeries(job.completesActions,
                 function(action, callback) {
                     var Actor = require('./completes_actions/'+action.moduleName);
 
@@ -59,7 +69,7 @@ function Worker(transmission, job, file, dump) {
                     actor.exec(callback);
                 },
                 function(err){
-                    if (err)  Worker.Error(util.format('Error with completes_actions: %j', err));
+                    if (err)  Worker.Error(Util.format('Error with completes_actions: %j', err));
 
                     Dump.removeDumpByHash(Worker.infoHash, function(err){
                         if (err) return Worker.Error(err);
@@ -67,56 +77,54 @@ function Worker(transmission, job, file, dump) {
                     });
                 }
             );
-        }
+        }*/
+        Worker.CompletesActionsDone(Worker.file);
     };
 
     // Check download state of current torrent
     Worker.CheckDownloadState = function(){
-        var checkDownloadStateReq = util.format('transmission-remote %s:%d --auth=%s --torrent %s --info',
-            transmission.host,
-            transmission.port,
-            transmission.auth,
-            Worker.infoHash);
-        log.debug("checkDownloadStateReq =", checkDownloadStateReq);
+        var state = null;
 
-        var checkDownloadStateRes = /Percent Done: ([0-9\.]*)%/gi ;
+        Async.doUntil(
+            function(callback) { // Work function
+                Worker.torrentClient.CheckDownloadState(Worker.infoHash, function(err, stateParams){
+                    if (err) return callback(err);
 
-        exec(checkDownloadStateReq,
-            function (error, stdout, stderr) {
-                log.debug("Response to changing dir:", arguments);
-                if (error)  return Worker.Error(util.format('Error with checkDownloadState: %j', error));
-                if (stderr) return Worker.Error(util.format('Error with checkDownloadState: %j', stderr));
+                    state = stateParams;
+                    setTimeout(callback, 30000);
+                });
+            },
+            function() {// test function
+                if (!Type(state,Object)) return false;
+                if (!Type(state.isFinished,Boolean)) return false;
+                if (!Type(state.percentDone,Number)) return false;
 
-                var match = checkDownloadStateRes.exec(stdout);
-                log.debug("Results of exec regexp to checkDownloadState response: match =", match);
+                if (state.isFinished || state.percentDone == 1) return true;
+            },
+            function(err) {
+                if (err)  return Worker.Error(Util.format('Error with checkDownloadState: %j', err));
 
-                if (match != null && match.length > 1 && match[1] == '100'){
-                    clearInterval(Worker.intervalObject);
-
-                    Dump.changeStep(Worker.infoHash, 4, function(err, obj) {
-                        if (err) return Worker.Error(util.format('Error with saving dump: %j', err));
-                        dump = obj;
-                        Worker.DownloadCompleted(Worker.file);
-                        Worker.StartCompletesActions();
-                    });
-                } else {
-                    log.debug("Download uncompleted");
-                }
+                Dump.changeStep(Worker.infoHash, 3, function(err, obj) {
+                    if (err) return Worker.Error(Util.format('Error with saving dump: %j', err));
+                    dump = obj;
+                    Worker.DownloadCompleted(Worker.file);
+                    Worker.StartCompletesActions();
+                });
             }
         );
     };
 
     // Creating torrent and add it to download
-    async.waterfall([
+    Async.waterfall([
         function(callback) { // step = 1; check torrent and get it's infoHash
             if (dump) return callback(null, dump.hash);
 
-            nt.read(Worker.file, function(err,torrent) {
+            Nt.read(Worker.file, function(err,torrent) {
                 //log.debug('Response to checking torrent:', arguments);
                 if (err) return callback(err);
 
                 var infoHash = torrent.infoHash();
-                log.debug('infoHash =',infoHash); // 51881f6e9546e6e6bba1a4a797c3dab3c07b655c
+                Log.debug('infoHash =',infoHash); // 51881f6e9546e6e6bba1a4a797c3dab3c07b655c
 
                 Dump.push(1, Worker.file, infoHash, function(err,obj) {
                     if (err) return callback(err);
@@ -125,82 +133,35 @@ function Worker(transmission, job, file, dump) {
                 });
             });
         },
-        function(infoHash, callback){ // step = 2; changing defDownloadDor to job.downloadDir
+        function(infoHash, callback) { //Create torrent client
+            Worker.torrentClient.Init(function(err){
+                callback(err, infoHash);
+            })
+        },
+        function(infoHash, callback){ //step = 2; add torrent ot download
             if (dump && dump.step >= 2 ) return callback(null, infoHash);
 
-            var changeDefDirReq = util.format('transmission-remote %s:%d --auth=%s --download-dir "%s"',
-                                                transmission.host,
-                                                transmission.port,
-                                                transmission.auth,
-                                                job.downloadDir);
-            log.debug("changeDefDirReq =", changeDefDirReq);
+            Worker.torrentClient.AddTorrent(Worker.file, job.downloadDir, function(err,hash,id){
+                if (err) return callback(err);
+                if (infoHash != hash) return callback(new Error('AddTorrent error: local and returned hashes is not equal'));
 
-            var changeDefDirRes = /responded: "(\w*)"/gi ;
+                Dump.changeStep(Worker.infoHash, 2, function(err, obj) {
+                    dump = obj;
+                    Worker.AddedFile(Worker.file);
 
-
-            exec(changeDefDirReq,
-                function (error, stdout, stderr) {
-                    log.debug("Response to changing dir:", arguments);
-                    if (error)  return callback(error);
-                    if (stderr) return callback(stderr);
-
-                    var match = changeDefDirRes.exec(stdout);
-                    log.debug("Results of exec regexp to changeDefDir response: match =", match);
-
-                    if (match != null && match.length > 1 && match[1] == 'success'){
-                        Worker.ChangedDefDir(job.downloadDir);
-                        Dump.changeStep(infoHash, 2, function(err, obj) {
-                            if (err) return callback(err);
-                            dump = obj;
-                            callback(null, infoHash);
-                        });
-                    } else {
-                        callback('Transmission responded for change download-dir unsuccess');
-                    }
-
-                }
-            );
-        },
-        function(infoHash, callback){ //step = 3; add torrent ot download
-            if (dump && dump.step >= 3 ) return callback(null, infoHash);
-
-            var addTorrentReq = util.format('transmission-remote %s:%d --auth=%s --add "%s"',
-                                                transmission.host,
-                                                transmission.port,
-                                                transmission.auth,
-                                                Worker.file);
-            log.debug("addTorrentReq =", addTorrentReq);
-            var addTorrentRes = /responded: "(\w*)"/gi; //исправить
-
-            exec(addTorrentReq,
-                function (error, stdout, stderr) {
-                    log.debug("Response to add torrent:", arguments);
-                    if (error)  return callback(error);
-                    if (stderr) return callback(stderr);
-
-                    var match = addTorrentRes.exec(stdout);
-                    log.debug("Results of exec regexp to addTorrent response: match =", match);
-
-                    if (match != null && match.length > 1 && match[1] == 'success'){
-                        Worker.AddedFile(Worker.file);
-                        Dump.changeStep(infoHash, 3, function(err, obj) {
-                            if (err) return callback(err);
-                            dump = obj;
-                            callback(null, infoHash);
-                        });
-                    } else {
-                        callback('Transmission responded for adding torrent unsuccess');
-                    }
-                }
-            );
+                    callback(null, infoHash);
+                });
+            });
         }
     ],
-        function(err, infoHash) { //step = 4; in the end set timer and wait while torrent will be download
+        function(err, infoHash) { //step = 3; in the end set timer and wait while torrent will be download
             if (err) return Worker.Error(err);
-            if (dump && dump.step >= 4 ) return Worker.StartCompletesActions();
 
             Worker.infoHash = infoHash;
-            Worker.intervalObject = setInterval(Worker.CheckDownloadState, 30000);
+
+            if (dump && dump.step >= 3 ) return Worker.StartCompletesActions();
+
+            Worker.CheckDownloadState();
         }
     );
 
@@ -208,6 +169,6 @@ function Worker(transmission, job, file, dump) {
 
 }
 
-Worker.prototype.__proto__ = events.EventEmitter.prototype;
+Worker.prototype.__proto__ = Events.EventEmitter.prototype;
 
 module.exports = Worker;

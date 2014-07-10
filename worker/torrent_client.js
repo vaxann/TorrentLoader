@@ -2,6 +2,7 @@ var Transmission = require('./torrent_clients/transmission');
 var UTorrent = null; //require('./torrent_clients/utorrent');
 
 function TorrentClient(server){
+
     var TorrentClient = this;
 
     TorrentClient.server = server;

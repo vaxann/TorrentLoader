@@ -1,10 +1,16 @@
-var events = require('events');
-var fs = require('fs');
-var log = require('../log')(module);
-var path = require('path');
+var Events = require('events');
+var Fs = require('fs');
+var Log = require('../log')(module);
+var Path = require('path');
+var Type = require('type-of-is');
 
 function Watcher(job, fileMask) {
-    log.debug('Creating object Watcher with arguments', arguments);
+    if (!Type(job, Object))
+        throw  Error('Error type of param "job" must be "Object", can\'t add Watcher');
+    if (!Type(fileMask, RegExp))
+        throw  Error('Error type of param "fileMask" must be "RegExp", can\'t add Watcher');
+
+    Log.debug('Creating object Watcher with arguments', arguments);
 
     var Watcher = this;
 
@@ -13,63 +19,63 @@ function Watcher(job, fileMask) {
     Watcher.timer = job.checkFrequency * 1000;
     Watcher.locketFiles = [];
 
-    events.EventEmitter.call(Watcher);
+    Events.EventEmitter.call(Watcher);
 
     // Emit error Event
     Watcher.Error = function(err) {
-        log.debug("Error function called, emitting Error event with argument = ", arguments);
+        Log.debug("Error function called, emitting Error event with argument = ", arguments);
         Watcher.emit('Error', err);
     };
 
     // Emit NewFile Event
     Watcher.NewFile = function(file) {
-        log.debug("NewFile function called, emitting NewFile event with argument = ", arguments);
+        Log.debug("NewFile function called, emitting NewFile event with argument = ", arguments);
         Watcher.emit('NewFile', file);
     };
 
     // Lock file, when file locked function CheckFolder does not Emit NewFile event
     // with this file
     Watcher.LocFile = function(file){
-        log.debug('Locking file:', file);
+        Log.debug('Locking file:', file);
         Watcher.locketFiles.push(file);
-        log.debug('File locked:', file);
+        Log.debug('File locked:', file);
     };
 
     // Unlocking file
     Watcher.UnlocFile = function(file){
-        log.debug('Unlocking file:', file);
+        Log.debug('Unlocking file:', file);
         var index = Watcher.locketFiles.indexOf(file);
         if (index >= 0) {
             Watcher.locketFiles.splice(index, 1);
-            log.debug('File unlocked:', file);
+            Log.debug('File unlocked:', file);
         }
     };
 
     // Remove file from disk
     Watcher.RemoveFile = function(file) {
-        log.debug('Removing file:', file);
-        fs.unlinkSync(file);
+        Log.debug('Removing file:', file);
+        Fs.unlinkSync(file);
     };
 
     // Read dir and check in for new torrent files
     Watcher.CheckFolder = function() {
-        log.debug('Checking folder:', Watcher.dir);
-        fs.readdir(Watcher.dir, function(err, files) {
+        Log.debug('Checking folder:', Watcher.dir);
+        Fs.readdir(Watcher.dir, function(err, files) {
             if (err) return Watcher.Error(err);
             if (files.length == 0) return;
 
             files.forEach(function(file) {
                 if (Watcher.fileMask.test(file) && Watcher.locketFiles.indexOf(file) == -1) {
-                    Watcher.NewFile(path.join(Watcher.dir, file));
+                    Watcher.NewFile(Path.join(Watcher.dir, file));
                 }
             });
         });
     };
 
-    log.debug('Setting timer for CheckFolder each', Watcher.timer, 'ms');
+    Log.debug('Setting timer for CheckFolder each', Watcher.timer, 'ms');
     setInterval(Watcher.CheckFolder, Watcher.timer);
 }
 
-Watcher.prototype.__proto__ = events.EventEmitter.prototype;
+Watcher.prototype.__proto__ = Events.EventEmitter.prototype;
 
 module.exports = Watcher;

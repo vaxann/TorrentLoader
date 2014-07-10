@@ -1,23 +1,33 @@
-var fs = require('fs');
-var path = require('path');
-var async = require('async');
-var log = require('../log')(module);
+var Fs = require('fs');
+var Path = require('path');
+var Async = require('async');
+var Log = require('../log')(module);
+var Type = require('type-of-is');
 
-var fileNameOfDump = path.join(path.dirname(__dirname), 'dump.json');
+var fileNameOfDump = Path.join(Path.dirname(__dirname), 'dump.json');
 var dumpHash = {};
 var dumpListByDir = {};
 var dumpList = [];
 
 // add to end of file
-function push(step, file, hash, callback) // step - stage of addition torrent
-{
+function push(step, file, hash, callback) { // step - stage of addition torrent
+    if(!Type(callback,'Function'))
+        return Log.error('Error, in dump.push function type of attr "callback" must be a "Function"');
+
+    if(!Type(step,Number))
+        return callback(new Error('Error, type of attr "step" must be a "Number"'));
+    if(!Type(file,String))
+        return callback(new Error('Error, type of attr "file" must be a "String"'));
+    if(!Type(hash,String))
+        return callback(new Error('Error, type of attr "hash" must be a "String"'));
+
     var obj = {step: step, file: file, hash: hash};
 
     var oldObj = getDumpByHash(hash);
     if (oldObj == null) {
         dumpList.push(obj);
 
-        async.parallel([
+        Async.parallel([
             rebuildIndexes,
             deserialize
         ],function(err){
@@ -31,6 +41,15 @@ function push(step, file, hash, callback) // step - stage of addition torrent
 
 
 function changeStep(hash, step, callback){
+    if(!Type(callback,'Function'))
+        return Log.error('Error, in dump.changeStep function type of attr "callback" must be a "Function"');
+
+    if(!Type(hash,String))
+        return callback(new Error('Error, type of attr "hash" must be a "String"'));
+    if(!Type(step,Number))
+        return callback(new Error('Error, type of attr "step" must be a "Number"'));
+
+
     var obj = getDumpByHash(hash);
     if (obj) {
         obj.step = step;
@@ -44,15 +63,17 @@ function changeStep(hash, step, callback){
 
 
 function rebuildIndexes(callback) {
+    if(!Type(callback,'Function'))
+        return Log.error('Error, in dump.rebuildIndexes function type of attr "callback" must be a "Function"');
 
     dumpHash = {};
     dumpListByDir = {};
 
     if (dumpList) {
-        async.each(dumpList, function(obj,callback) {
+        Async.each(dumpList, function(obj,callback) {
             dumpHash[obj.hash] = obj;
 
-            var dir = path.dirname(obj.file);
+            var dir = Path.dirname(obj.file);
             if (dir in dumpListByDir)
                 dumpListByDir[dir].push(obj);
             else
@@ -62,13 +83,16 @@ function rebuildIndexes(callback) {
             callback();
         }, callback);
     } else {
-        callback('Error dump is null');
+        callback(new Error('Error dump is null'));
     }
 }
 
 // first init
 function init(callback){
-    async.waterfall([
+    if(!Type(callback,'Function'))
+        return Log.error('Error, in dump.init function type of attr "callback" must be a "Function"');
+
+    Async.waterfall([
             serialize,
             rebuildIndexes
         ],callback);
@@ -76,6 +100,11 @@ function init(callback){
 
 //
 function getDumpByHash(hash){
+    if(!Type(hash,String)) {
+        Log.error('Error, in dump.getDumpByHash function type of attr "hash" must be a "String"');
+        return null;
+    }
+
     if (hash in dumpHash) {
         return dumpHash[hash];
     } else {
@@ -84,6 +113,11 @@ function getDumpByHash(hash){
 }
 
 function getDumpListByDir(dir){
+    if(!Type(dir,String)) {
+        Log.error('Error, in dump.getDumpListByDir function type of attr "dir" must be a "String"');
+        return null;
+    }
+
     if (dir in dumpListByDir) {
         return dumpListByDir[dir];
     } else {
@@ -93,13 +127,19 @@ function getDumpListByDir(dir){
 
 
 function removeDumpByHash(hash, callback) {
+    if(!Type(callback,'Function'))
+        return Log.error('Error, in dump.removeDumpByHash function type of attr "callback" must be a "Function"');
+
+    if(!Type(hash,String))
+        return callback(new Error('Error, type of attr "hash" must be a "String"'));
+
     if (hash in dumpHash) {
         var obj = dumpHash[hash];
 
         var index = dumpList.indexOf(obj);
         if (index >= 0) dumpList.splice(index, 1);
 
-        async.parallel([
+        Async.parallel([
             rebuildIndexes,
             deserialize
         ],callback);
@@ -112,21 +152,47 @@ function removeDumpByHash(hash, callback) {
 
 // load form file
 function serialize(callback) {
-    async.waterfall([
+    if(!Type(callback,'Function'))
+        return Log.error('Error, in serialize.removeDumpByHash function type of attr "callback" must be a "Function"');
+
+    Async.waterfall([
             function(callback){ //reading file
-                fs.readFile(fileNameOfDump,'utf8',function(err, data){
+                Fs.readFile(fileNameOfDump,'utf8',function(err, data){
                     if (err) return callback(err);
 
                     callback(null,data);
                 });
             },
             function(data, callback){ //parsing file data to object
+                var parsedData = null;
                 try {
-                    dumpList = JSON.parse(data);
+                    parsedData = JSON.parse(data);
                 } catch (err){
                     return callback(err);
                 }
-                callback(null);
+                callback(null, parsedData);
+            },
+            function(parsedData, callback) { //checking data types
+                if (!Type(parsedData, Array))
+                    return callback(new Error('Error, loaded dump is\'t array'));
+
+                Async.each(parsedData, function(obj, callback) {
+                    if(!Type(obj,Object))
+                        return callback(new Error('Error with loading dump, type of dump[] must be an "Object"'));
+                    if(!Type(obj.step,Number))
+                        return callback(new Error('Error with loading dump, type of attr "step" must be a "Number"'));
+                    if(!Type(obj.file,String))
+                        return callback(new Error('Error with loading dump, type of attr "file" must be a "String"'));
+                    if(!Type(obj.hash,String))
+                        return callback(new Error('Error with loading dump, type of attr "hash" must be a "String"'));
+
+                    callback();
+                }, function(err){
+                    if (err) return callback(err);
+
+                    dumpList = parsedData;
+                    callback();
+                });
             }
         ],callback);
 }
@@ -135,7 +201,10 @@ function serialize(callback) {
 // save to file
 function deserialize(callback)
 {
-    fs.writeFile(fileNameOfDump, JSON.stringify(dumpList,null,4),'utf8',callback);
+    if(!Type(callback,'Function'))
+        return Log.error('Error, in serialize.deserialize function type of attr "callback" must be a "Function"');
+
+    Fs.writeFile(fileNameOfDump, JSON.stringify(dumpList,null,4),'utf8',callback);
 }
 
 
