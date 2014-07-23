@@ -1,7 +1,7 @@
 var vows = require('vows'),
     assert = require('assert');
 
-var Transmission = require('../worker/torrent_clients/transmission');
+var Transmission = require('./transmission');
 var transmission = null;
 
 /*//Automatic tests

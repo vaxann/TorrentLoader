@@ -4,12 +4,12 @@ var Async = require('async');
 var Nt = require('nt');
 var Log = require('../log')(module);
 var Dump = require('./dump');
-var TorrentClient = require('./torrent_client');
+var TorrentClient = require('./../server/torrent_client');
 var Type = require('type-of-is');
 
 function Worker(server, job, file, dump) {
-    if (!Type(server, Object))
-        throw  Error('Error type of param "server" must be "Object", can\'t add Worker');
+    if (!Type(server, Server))
+        throw  Error('Error type of param "server" must be "Server", can\'t add Worker');
     if (!Type(job, Object))
         throw  Error('Error type of param "job" must be "Object", can\'t add Worker');
     if (!Type(file, String))
@@ -25,7 +25,7 @@ function Worker(server, job, file, dump) {
 
     Worker.infoHash = null;
     Worker.file = file;
-    Worker.torrentClient = new TorrentClient(server);
+    Worker.torrentClient = server.torrentClient;
 
     // Emit error Event
     Worker.Error = function(err) {
@@ -132,11 +132,6 @@ function Worker(server, job, file, dump) {
                     callback(null, infoHash);
                 });
             });
-        },
-        function(infoHash, callback) { //Create torrent client
-            Worker.torrentClient.Init(function(err){
-                callback(err, infoHash);
-            })
         },
         function(infoHash, callback){ //step = 2; add torrent ot download
             if (dump && dump.step >= 2 ) return callback(null, infoHash);

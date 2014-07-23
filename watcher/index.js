@@ -18,6 +18,7 @@ function Watcher(job, fileMask) {
     Watcher.fileMask = fileMask;
     Watcher.timer = job.checkFrequency * 1000;
     Watcher.locketFiles = [];
+    Watcher.workers = [];
 
     Events.EventEmitter.call(Watcher);
 

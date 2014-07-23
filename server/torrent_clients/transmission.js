@@ -1,6 +1,6 @@
 var Request = require('request');
 var Util = require('util');
-var Log = require('../../log')(module);
+var Log = require('../../log/index')(module);
 var Fs = require('fs');
 var Nt = require('nt');
 var Type = require('type-of-is');

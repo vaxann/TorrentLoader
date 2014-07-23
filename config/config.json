@@ -1,27 +1,30 @@
 {
-    "server": {
-        "application" : "transmission",
-        "host" : "25.199.18.121",
-        "port" : 9091,
-        "user" : "tvuser",
-        "password" : "frtgbfrtgb"
-    },
-    "jobs": [
+    "servers": [
         {
-            "name": "Downloads",
-            "checkFrequency": 5,
-            "watchDir": "test/",
-            "downloadDir": "/Users/tvuser/Downloads",
-            "completesActions" : [
+            "name" : "Dacha Server",
+            "application" : "transmission",
+            "host" : "25.69.37.109",
+            "port" : 9091,
+            "user" : "ivanabramenko",
+            "password" : "frtgbfrtgb",
+            "jobs": [
                 {
-                    "moduleName" : "transfer_action",
-                    "condition": {
-                        "param" : "ratio",
-                        "operation" : ">=",
-                        "value" : 1
-                    },
-                    "actions" : [
-                        "pause"
+                    "name": "Downloads",
+                    "checkFrequency": 5,
+                    "watchDir": "test/",
+                    "downloadDir": "/home/ivanabramenko/capsule1/downloads",
+                    "completesActions" : [
+                        {
+                            "moduleName" : "transfer_action",
+                            "condition": {
+                                "param" : "ratio",
+                                "operation" : ">=",
+                                "value" : 1
+                            },
+                            "actions" : [
+                                "pause"
+                            ]
+                        }
                     ]
                 }
             ]
