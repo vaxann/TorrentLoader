@@ -142,7 +142,7 @@ function Watcher(server, jobData) {
     Watcher.addWorker = function(newFile, dump, callback) {
         if (!Type(newFile, String))
             return callback(new Error('Error type of param "newFile" must be "String", can\'t add Worker'));
-        if (!Type.any(dump, [Object,undefined]))
+        if (!Type.any(dump, [Object,null, undefined]))
             return callback(new Error('Error type of param "dump" must be "Object" or "Undefined", can\'t add Worker'));
 
 

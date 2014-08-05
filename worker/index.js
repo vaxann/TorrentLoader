@@ -10,7 +10,7 @@ function Worker(watcher, file, dump) {
         throw  Error('Error type of param "watcher" must be "Watcher", can\'t add Worker');
     if (!Type(file, String))
         throw  Error('Error type of param "file" must be "String", can\'t add Worker');
-    if (!Type.any(dump, [Object,undefined]))
+    if (!Type.any(dump, [Object, null, undefined]))
         throw  Error('Error type of param "dump" must be "Object" or "Undefined", can\'t add Worker');
 
     var Worker = this;
