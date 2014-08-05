@@ -48,7 +48,7 @@ function Watcher(server, jobData) {
         if (dumpList) {
             Async.each(dumpList,
                 function(dump, callback){
-                    Watcher.addWorker(dump.file, dump);
+                    Watcher.addWorker(dump.file, dump, callback);
                 },
                 callback
             );
