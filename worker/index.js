@@ -6,7 +6,7 @@ var Dump = require('../dump/index');
 var Type = require('type-of-is');
 
 function Worker(watcher, file, dump) {
-    if (!Type(watcher, Watcher))
+    if (!Type(watcher, 'Watcher'))
         throw  Error('Error type of param "watcher" must be "Watcher", can\'t add Worker');
     if (!Type(file, String))
         throw  Error('Error type of param "file" must be "String", can\'t add Worker');
