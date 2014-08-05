@@ -1,55 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d190392d-5319-4030-a7b3-fbe413a0d7f4" name="Default" comment="">
-      <change type="MOVED" beforePath="$PROJECT_DIR$/worker/dump.js" afterPath="$PROJECT_DIR$/dump/index.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/winston/node_modules/pkginfo/examples/all-properties.js" afterPath="$PROJECT_DIR$/node_modules/winston/node_modules/pkginfo/examples/all-properties.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app.js" afterPath="$PROJECT_DIR$/app.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/winston/node_modules/pkginfo/examples/array-argument.js" afterPath="$PROJECT_DIR$/node_modules/winston/node_modules/pkginfo/examples/array-argument.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/async/lib/async.js" afterPath="$PROJECT_DIR$/node_modules/async/lib/async.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/nconf/node_modules/async/lib/async.js" afterPath="$PROJECT_DIR$/node_modules/nconf/node_modules/async/lib/async.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/nt/node_modules/async/lib/async.js" afterPath="$PROJECT_DIR$/node_modules/nt/node_modules/async/lib/async.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/request/node_modules/form-data/node_modules/async/lib/async.js" afterPath="$PROJECT_DIR$/node_modules/request/node_modules/form-data/node_modules/async/lib/async.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/winston/node_modules/async/lib/async.js" afterPath="$PROJECT_DIR$/node_modules/winston/node_modules/async/lib/async.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/nconf/node_modules/optimist/example/boolean_double.js" afterPath="$PROJECT_DIR$/node_modules/nconf/node_modules/optimist/example/boolean_double.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/nconf/node_modules/optimist/example/boolean_single.js" afterPath="$PROJECT_DIR$/node_modules/nconf/node_modules/optimist/example/boolean_single.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/request/node_modules/form-data/node_modules/combined-stream/test/common.js" afterPath="$PROJECT_DIR$/node_modules/request/node_modules/form-data/node_modules/combined-stream/test/common.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/winston/node_modules/request/node_modules/form-data/node_modules/combined-stream/test/common.js" afterPath="$PROJECT_DIR$/node_modules/winston/node_modules/request/node_modules/form-data/node_modules/combined-stream/test/common.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/nt/node_modules/ordered-emitter/example/emit.js" afterPath="$PROJECT_DIR$/node_modules/nt/node_modules/ordered-emitter/example/emit.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/nconf/test/stores/file-store-test.js" afterPath="$PROJECT_DIR$/node_modules/nconf/test/stores/file-store-test.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/nconf/lib/nconf/stores/file.js" afterPath="$PROJECT_DIR$/node_modules/nconf/lib/nconf/stores/file.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/nt/lib/hasher.js" afterPath="$PROJECT_DIR$/node_modules/nt/lib/hasher.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/index.js" afterPath="$PROJECT_DIR$/lib/index.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server/index.js" afterPath="$PROJECT_DIR$/server/index.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/watcher/index.js" afterPath="$PROJECT_DIR$/watcher/index.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/worker/index.js" afterPath="$PROJECT_DIR$/worker/index.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/winston/node_modules/request/node_modules/qs/test/browser/jquery.js" afterPath="$PROJECT_DIR$/node_modules/winston/node_modules/request/node_modules/qs/test/browser/jquery.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/winston/node_modules/pkginfo/examples/multiple-properties.js" afterPath="$PROJECT_DIR$/node_modules/winston/node_modules/pkginfo/examples/multiple-properties.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/nt/bin/nt.js" afterPath="$PROJECT_DIR$/node_modules/nt/bin/nt.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/winston/node_modules/pkginfo/examples/object-argument.js" afterPath="$PROJECT_DIR$/node_modules/winston/node_modules/pkginfo/examples/object-argument.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/nconf/node_modules/optimist/node_modules/minimist/example/parse.js" afterPath="$PROJECT_DIR$/node_modules/nconf/node_modules/optimist/node_modules/minimist/example/parse.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/winston/node_modules/pkginfo/lib/pkginfo.js" afterPath="$PROJECT_DIR$/node_modules/winston/node_modules/pkginfo/lib/pkginfo.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/nconf/test/provider-test.js" afterPath="$PROJECT_DIR$/node_modules/nconf/test/provider-test.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/nconf/node_modules/optimist/example/reflect.js" afterPath="$PROJECT_DIR$/node_modules/nconf/node_modules/optimist/example/reflect.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/winston/node_modules/pkginfo/examples/single-property.js" afterPath="$PROJECT_DIR$/node_modules/winston/node_modules/pkginfo/examples/single-property.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/nt/node_modules/buffers/examples/slice.js" afterPath="$PROJECT_DIR$/node_modules/nt/node_modules/buffers/examples/slice.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/nt/node_modules/buffers/examples/splice.js" afterPath="$PROJECT_DIR$/node_modules/nt/node_modules/buffers/examples/splice.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/nconf/node_modules/optimist/example/string.js" afterPath="$PROJECT_DIR$/node_modules/nconf/node_modules/optimist/example/string.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/winston/node_modules/pkginfo/examples/target-dir.js" afterPath="$PROJECT_DIR$/node_modules/winston/node_modules/pkginfo/examples/target-dir.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/request/node_modules/form-data/node_modules/combined-stream/test/integration/test-callback-streams.js" afterPath="$PROJECT_DIR$/node_modules/request/node_modules/form-data/node_modules/combined-stream/test/integration/test-callback-streams.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/winston/node_modules/request/node_modules/form-data/node_modules/combined-stream/test/integration/test-callback-streams.js" afterPath="$PROJECT_DIR$/node_modules/winston/node_modules/request/node_modules/form-data/node_modules/combined-stream/test/integration/test-callback-streams.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/request/node_modules/form-data/node_modules/combined-stream/test/integration/test-delayed-streams-and-buffers-and-strings.js" afterPath="$PROJECT_DIR$/node_modules/request/node_modules/form-data/node_modules/combined-stream/test/integration/test-delayed-streams-and-buffers-and-strings.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/winston/node_modules/request/node_modules/form-data/node_modules/combined-stream/test/integration/test-delayed-streams-and-buffers-and-strings.js" afterPath="$PROJECT_DIR$/node_modules/winston/node_modules/request/node_modules/form-data/node_modules/combined-stream/test/integration/test-delayed-streams-and-buffers-and-strings.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/request/node_modules/form-data/node_modules/combined-stream/test/integration/test-delayed-streams.js" afterPath="$PROJECT_DIR$/node_modules/request/node_modules/form-data/node_modules/combined-stream/test/integration/test-delayed-streams.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/winston/node_modules/request/node_modules/form-data/node_modules/combined-stream/test/integration/test-delayed-streams.js" afterPath="$PROJECT_DIR$/node_modules/winston/node_modules/request/node_modules/form-data/node_modules/combined-stream/test/integration/test-delayed-streams.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/request/node_modules/form-data/node_modules/combined-stream/test/integration/test-is-stream-like.js" afterPath="$PROJECT_DIR$/node_modules/request/node_modules/form-data/node_modules/combined-stream/test/integration/test-is-stream-like.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/winston/node_modules/request/node_modules/form-data/node_modules/combined-stream/test/integration/test-is-stream-like.js" afterPath="$PROJECT_DIR$/node_modules/winston/node_modules/request/node_modules/form-data/node_modules/combined-stream/test/integration/test-is-stream-like.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/request/node_modules/form-data/node_modules/combined-stream/test/integration/test-max-data-size.js" afterPath="$PROJECT_DIR$/node_modules/request/node_modules/form-data/node_modules/combined-stream/test/integration/test-max-data-size.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/winston/node_modules/request/node_modules/form-data/node_modules/combined-stream/test/integration/test-max-data-size.js" afterPath="$PROJECT_DIR$/node_modules/winston/node_modules/request/node_modules/form-data/node_modules/combined-stream/test/integration/test-max-data-size.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/request/node_modules/form-data/node_modules/combined-stream/test/integration/test-unpaused-streams.js" afterPath="$PROJECT_DIR$/node_modules/request/node_modules/form-data/node_modules/combined-stream/test/integration/test-unpaused-streams.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/winston/node_modules/request/node_modules/form-data/node_modules/combined-stream/test/integration/test-unpaused-streams.js" afterPath="$PROJECT_DIR$/node_modules/winston/node_modules/request/node_modules/form-data/node_modules/combined-stream/test/integration/test-unpaused-streams.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/nconf/node_modules/optimist/example/usage-options.js" afterPath="$PROJECT_DIR$/node_modules/nconf/node_modules/optimist/example/usage-options.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/nconf/usage.js" afterPath="$PROJECT_DIR$/node_modules/nconf/usage.js" />
+    <list default="true" id="d190392d-5319-4030-a7b3-fbe413a0d7f4" name="Default" comment="Refract all code">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="TorrentLoader.iws" />
@@ -98,7 +50,7 @@
           <file leaf-file-name="index.js" pinned="false" current="true" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/watcher/index.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="2.962448" vertical-offset="0" max-vertical-offset="2535">
+                <state vertical-scroll-proportion="4.541578" vertical-offset="0" max-vertical-offset="2535">
                   <caret line="142" column="35" selection-start-line="142" selection-start-column="35" selection-end-line="142" selection-end-column="35" />
                   <folding />
                 </state>
@@ -132,7 +84,7 @@
           <file leaf-file-name="torrent_client.js" pinned="false" current="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/server/torrent_client.js">
               <provider selected="true" editor-type-id="text-editor">
-                <state vertical-scroll-proportion="0.67672414" vertical-offset="84" max-vertical-offset="780">
+                <state vertical-scroll-proportion="1.0560538" vertical-offset="84" max-vertical-offset="780">
                   <caret line="37" column="10" selection-start-line="37" selection-start-column="10" selection-end-line="37" selection-end-column="10" />
                   <folding />
                 </state>
@@ -633,7 +585,11 @@
       <created>1404997561425</created>
       <updated>1404997561426</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="Refract all code">
+      <created>1407229831953</created>
+      <updated>1407229831953</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="TodoView" selected-index="0">
@@ -658,9 +614,10 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="48" y="22" width="1392" height="878" extended-state="0" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
-      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32822967" sideWeight="0.4997367" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3291866" sideWeight="0.4997367" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3276316" sideWeight="0.4997367" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3263158" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33421052" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3276316" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -670,11 +627,10 @@
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.26750922" sideWeight="0.4275256" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3291866" sideWeight="0.5002633" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.335958" sideWeight="0.49961028" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3291866" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32894737" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3291866" sideWeight="0.4997367" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
@@ -736,7 +692,8 @@
     <MESSAGE value="fix dumpListByDir[dir].push(obj) error" />
     <MESSAGE value="added getParam for torrent" />
     <MESSAGE value="Refactored worker and main loop" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactored worker and main loop" />
+    <MESSAGE value="Refract all code" />
+    <option name="LAST_COMMIT_MESSAGE" value="Refract all code" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1102,7 +1059,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/server/torrent_client.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.67672414" vertical-offset="84" max-vertical-offset="780">
+        <state vertical-scroll-proportion="1.0560538" vertical-offset="84" max-vertical-offset="780">
           <caret line="37" column="10" selection-start-line="37" selection-start-column="10" selection-end-line="37" selection-end-column="10" />
           <folding />
         </state>
@@ -1126,7 +1083,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/watcher/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="2.962448" vertical-offset="0" max-vertical-offset="2535">
+        <state vertical-scroll-proportion="4.541578" vertical-offset="0" max-vertical-offset="2535">
           <caret line="142" column="35" selection-start-line="142" selection-start-column="35" selection-end-line="142" selection-end-column="35" />
           <folding />
         </state>
