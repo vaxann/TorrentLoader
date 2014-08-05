@@ -128,14 +128,19 @@ function Watcher(server, jobData) {
 
     // Remove file from disk
     Watcher.MoveFile = function(file) {
-        Log.debug('Moving file to ./added:', file);
-        var newDir = Path.join(Watcher.watchDir, 'added');
+        if (Fs.existsSync(file)) {
+            Log.info('Moving file to ./added:', file);
+            var newDir = Path.join(Watcher.watchDir, 'added');
 
-        if (!Fs.existsSync(newDir))
-            Fs.mkdirSync(newDir);
+            if (!Fs.existsSync(newDir))
+                Fs.mkdirSync(newDir);
 
-        var newFile = Path.join(newDir, file.split('/')[file.split('/').length-1]);
-        Fs.renameSync(file, newFile);
+            var newFile = Path.join(newDir, file.split('/')[file.split('/').length-1]);
+            Fs.renameSync(file, newFile);
+        } else {
+            Log.info('File %s already moved to ./added:', file);
+        }
+
     };
 
 
