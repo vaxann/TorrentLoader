@@ -1,37 +1,111 @@
-var Events = require('events');
 var Fs = require('fs');
 var Log = require('../log')(module);
 var Path = require('path');
 var Type = require('type-of-is');
+var Lib = require('../lib');
+var Async = require('async');
+var Dump = require('../dump/index');
+var Worker = require('../worker');
 
-function Watcher(job, fileMask) {
-    if (!Type(job, Object))
-        throw  Error('Error type of param "job" must be "Object", can\'t add Watcher');
-    if (!Type(fileMask, RegExp))
-        throw  Error('Error type of param "fileMask" must be "RegExp", can\'t add Watcher');
 
-    Log.debug('Creating object Watcher with arguments', arguments);
+var fileMask = /\.torrent$/gi;  // finding only torrent files
+
+function Watcher(server, jobData) {
+    if (!Type(server, 'Server'))
+        throw  Error('Error type of param "sever" must be "Sever", can\'t create Watcher');
+    if (!Type(jobData, Object))
+        throw  Error('Error type of param "jobData" must be "Object", can\'t create Watcher');
 
     var Watcher = this;
 
-    Watcher.dir = job.watchDir;
-    Watcher.fileMask = fileMask;
-    Watcher.timer = job.checkFrequency * 1000;
+    Watcher.server = server;
+
+    if (!Lib.clone(Watcher, jobData, [
+                {'name':'String'},
+                {'checkFrequency':'Number'},
+                {'watchDir':'String'},
+                {'downloadDir': 'String'},
+                {'completesActions': 'Array'}
+            ]))
+        throw Error('Error can\'t clone jobData to Watcher');
+
+    Watcher.timer = Watcher.checkFrequency * 1000;
     Watcher.locketFiles = [];
     Watcher.workers = [];
+    Watcher.timeoutId = null;
 
-    Events.EventEmitter.call(Watcher);
 
-    // Emit error Event
-    Watcher.Error = function(err) {
-        Log.debug("Error function called, emitting Error event with argument = ", arguments);
-        Watcher.emit('Error', err);
+    Watcher.Start = function(callback) {
+        Log.debug('Starting job:', Watcher.name);
+        if (!Watcher.server.isOnline) {
+            Log.info('Server %d is offline -> can\'t start watching', Watcher.server.name);
+            return callback();
+        }
+
+        Watcher.CheckFolder();
+
+        var dumpList = Dump.getDumpListByDir(Watcher.watchDir);
+        if (dumpList) {
+            Async.each(dumpList,
+                function(dump, callback){
+                    Watcher.addWorker(dump.file, dump);
+                },
+                callback
+            );
+        } else {
+            callback();
+        }
     };
 
-    // Emit NewFile Event
-    Watcher.NewFile = function(file) {
-        Log.debug("NewFile function called, emitting NewFile event with argument = ", arguments);
-        Watcher.emit('NewFile', file);
+
+    Watcher.Stop = function(callback) {
+        Log.debug('Stopping job:', Watcher.name);
+        if (Watcher.timeoutId)
+            clearTimeout(Watcher.timeoutId);
+
+        Async.each(Watcher.workers,
+            function(worker, callback){
+                worker.Kill(callback);
+                worker = null;
+            },
+            function(err) {
+                Watcher.workers = [];
+                callback(err);
+            }
+
+        );
+    };
+
+
+    // Read dir and check in for new torrent files
+    Watcher.CheckFolder = function() {
+        if (!Watcher.server.isOnline) {
+            Log.info('Server %d is offline -> turnoff CheckFolder loop', Watcher.server.name);
+            return;
+        }
+
+        Log.debug('Checking folder:', Watcher.watchDir);
+        Fs.readdir(Watcher.watchDir, function(err, files) {
+            if (err) return Log.error(err);
+            //if (files.length == 0) return;
+            var addedFiles = 0;
+
+            Async.each(files,
+                function(file, callback){ // add each file
+                    if (fileMask.test(file) && Watcher.locketFiles.indexOf(file) == -1) {
+                        addedFiles += 1;
+                        Watcher.addWorker(Path.join(Watcher.watchDir, file), null, callback);
+                    } else callback();
+                },
+                function(err){
+                    if (err) Log.error(err.message);
+
+                    Watcher.timeoutId = setTimeout(Watcher.CheckFolder, Watcher.timer);
+
+                    Log.debug('Added %d workers', addedFiles);
+                }
+            );
+        });
     };
 
     // Lock file, when file locked function CheckFolder does not Emit NewFile event
@@ -53,30 +127,38 @@ function Watcher(job, fileMask) {
     };
 
     // Remove file from disk
-    Watcher.RemoveFile = function(file) {
-        Log.debug('Removing file:', file);
-        Fs.unlinkSync(file);
+    Watcher.MoveFile = function(file) {
+        Log.debug('Moving file to ./added:', file);
+        var newDir = Path.join(Watcher.watchDir, 'added');
+
+        if (!Fs.existsSync(newDir))
+            Fs.mkdirSync(newDir);
+
+        var newFile = Path.join(newDir, file.split('/')[file.split('/').length-1]);
+        Fs.renameSync(file, newFile);
     };
 
-    // Read dir and check in for new torrent files
-    Watcher.CheckFolder = function() {
-        Log.debug('Checking folder:', Watcher.dir);
-        Fs.readdir(Watcher.dir, function(err, files) {
-            if (err) return Watcher.Error(err);
-            if (files.length == 0) return;
 
-            files.forEach(function(file) {
-                if (Watcher.fileMask.test(file) && Watcher.locketFiles.indexOf(file) == -1) {
-                    Watcher.NewFile(Path.join(Watcher.dir, file));
-                }
-            });
+    Watcher.addWorker = function(newFile, dump, callback) {
+        if (!Type(newFile, String))
+            return callback(new Error('Error type of param "newFile" must be "String", can\'t add Worker'));
+        if (!Type.any(dump, [Object,undefined]))
+            return callback(new Error('Error type of param "dump" must be "Object" or "Undefined", can\'t add Worker'));
+
+
+        var worker = new Worker(Watcher, newFile, dump);
+        Watcher.workers.push(worker);
+
+        worker.Init(function(err){
+            if (err) return callback(err);
+
+            // Move if well done
+            Watcher.MoveFile(newFile);
+
+            callback();
         });
-    };
+    }
 
-    Log.debug('Setting timer for CheckFolder each', Watcher.timer, 'ms');
-    setInterval(Watcher.CheckFolder, Watcher.timer);
 }
-
-Watcher.prototype.__proto__ = Events.EventEmitter.prototype;
 
 module.exports = Watcher;

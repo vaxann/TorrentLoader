@@ -1,7 +1,7 @@
 var Fs = require('fs');
 var Path = require('path');
 var Async = require('async');
-var Log = require('../log')(module);
+var Log = require('../log/index')(module);
 var Type = require('type-of-is');
 
 var fileNameOfDump = Path.join(Path.dirname(__dirname), 'dump.json');

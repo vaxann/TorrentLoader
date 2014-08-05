@@ -1,13 +1,162 @@
-var Events = require('events');
 var Util = require('util');
 var Async = require('async');
 var Nt = require('nt');
 var Log = require('../log')(module);
-var Dump = require('./dump');
-var TorrentClient = require('./../server/torrent_client');
+var Dump = require('../dump/index');
 var Type = require('type-of-is');
 
-function Worker(server, job, file, dump) {
+function Worker(watcher, file, dump) {
+    if (!Type(watcher, Watcher))
+        throw  Error('Error type of param "watcher" must be "Watcher", can\'t add Worker');
+    if (!Type(file, String))
+        throw  Error('Error type of param "file" must be "String", can\'t add Worker');
+    if (!Type.any(dump, [Object,undefined]))
+        throw  Error('Error type of param "dump" must be "Object" or "Undefined", can\'t add Worker');
+
+    var Worker = this;
+
+    Worker.infoHash = null;
+    Worker.file = file;
+    Worker.torrentClient = watcher.server.torrentClient;
+    Worker.isKilling = false;
+    Worker.checkFrequency = 30;
+    Worker.timer = Worker.checkFrequency * 1000;
+
+
+    Worker.Kill = function(callback) {
+        Worker.isKilling = true;
+
+        // waiting for killing workers
+        Async.whilst(
+            function() {return Worker.isKilling == false},
+            function(callback) {setTimeout(callback, 10)},
+            callback
+        );
+    };
+
+    Worker.Init = function(callback) {
+        Async.waterfall([
+                function(callback) { // step = 1; check torrent and get it's infoHash
+                    if (Worker.isKilling) return callback(new Error('Killed by Worker.Kill'));
+                    if (dump) return callback(null, dump.hash);
+
+                    Nt.read(Worker.file, function(err,torrent) {
+                        //log.debug('Response to checking torrent:', arguments);
+                        if (err) return callback(err);
+
+                        var infoHash = torrent.infoHash();
+                        Log.debug('File = %s infoHash = %s', Worker.file, infoHash); // 51881f6e9546e6e6bba1a4a797c3dab3c07b655c
+
+                        Dump.push(1, Worker.file, infoHash, function(err,obj) {
+                            if (err) return callback(err);
+                            dump = obj;
+                            callback(null, infoHash);
+                        });
+                    });
+                },
+                function(infoHash, callback){ //step = 2; add torrent ot download
+                    if (Worker.isKilling) return callback(new Error('Killed by Worker.Kill'));
+                    if (dump && dump.step >= 2 ) return callback(null, infoHash);
+
+                    Worker.torrentClient.AddTorrent(Worker.file, watcher.downloadDir, function(err,hash,id){
+                        if (err) return callback(err);
+                        if (infoHash != hash) return callback(new Error('AddTorrent error: local and returned hashes is not equal'));
+
+                        Dump.changeStep(infoHash, 2, function(err, obj) {
+                            if (err) return callback(err);
+
+                            dump = obj;
+                            Log.info('File %s added', Worker.file);
+
+                            callback(null, infoHash);
+                        });
+                    });
+                }
+            ],
+            function(err, infoHash) { //in the end set timer and wait while torrent will be download
+                if (Worker.isKilling) Worker.isKilling = false;
+                if (err) return callback(err);
+
+                Worker.infoHash = infoHash;
+
+                if (dump && dump.step == 2 ) Worker.CheckDownloadState();
+                if (dump && dump.step >= 3 ) Worker.StartCompletesActions();
+
+                callback();
+            }
+        );
+
+    };
+
+    Worker.CheckDownloadState = function(){ //step = 3
+        var state = null;
+
+        Async.doUntil(
+            function(callback) { // Work function
+                if (Worker.isKilling) return callback(new Error('Killed by Worker.Kill'));
+
+                Worker.torrentClient.CheckDownloadState(Worker.infoHash, function(err, stateParams){
+                    if (err) return callback(err);
+
+                    state = stateParams;
+                    Log.debug('CheckDownloadState:', state);
+
+                    setTimeout(callback, Worker.timer);
+                });
+            },
+            function() {// test function
+                if (!Type(state,Object)) return false;
+                if (!Type(state.isFinished,Boolean)) return false;
+                if (!Type(state.percentDone,Number)) return false;
+
+                if (state.isFinished || state.percentDone == 1) return true;
+            },
+            function(err) {
+                if (Worker.isKilling) Worker.isKilling = false;
+                if (err)  return Log.error(Util.format('Error with checkDownloadState: %j', err.message));
+
+                Dump.changeStep(Worker.infoHash, 3, function(err, obj) {
+                    if (err) return Log.error(Util.format('Error with saving dump: %j', err.message));
+                    dump = obj;
+
+                    Log.info('File %s downloaded', Worker.file);
+                    Worker.StartCompletesActions();
+                });
+            }
+        );
+    };
+
+    Worker.StartCompletesActions = function(){
+        Dump.removeDumpByHash(Worker.infoHash, function(err){
+            if (err) return Log.error(err.message);
+            Log.info('Actions for torrent %s completed', Worker.file);
+        });
+
+/*        if (job.completes_actions.length){
+            Async.eachSeries(job.completesActions,
+                function(action, callback) {
+                    var Actor = require('./completes_actions/'+action.moduleName);
+
+                    var actor = new Actor(transmission, dump, action.condition, action.actions);
+
+                    actor.exec(callback);
+                },
+                function(err){
+                    if (err)  Worker.Error(Util.format('Error with completes_actions: %j', err));
+
+                    Dump.removeDumpByHash(Worker.infoHash, function(err){
+                        if (err) return Worker.Error(err);
+                        Worker.CompletesActionsDone(Worker.file);
+                    });
+                }
+            );
+        }
+
+        Worker.CompletesActionsDone(Worker.file);*/
+    };
+
+
+/*
     if (!Type(server, Server))
         throw  Error('Error type of param "server" must be "Server", can\'t add Worker');
     if (!Type(job, Object))
@@ -59,7 +208,8 @@ function Worker(server, job, file, dump) {
 
 
     Worker.StartCompletesActions = function(){
- /*       if (job.completes_actions.length){
+ */
+/*       if (job.completes_actions.length){
             Async.eachSeries(job.completesActions,
                 function(action, callback) {
                     var Actor = require('./completes_actions/'+action.moduleName);
@@ -77,7 +227,8 @@ function Worker(server, job, file, dump) {
                     });
                 }
             );
-        }*/
+        }*//*
+
         Worker.CompletesActionsDone(Worker.file);
     };
 
@@ -159,11 +310,10 @@ function Worker(server, job, file, dump) {
             Worker.CheckDownloadState();
         }
     );
+*/
 
 
 
 }
-
-Worker.prototype.__proto__ = Events.EventEmitter.prototype;
 
 module.exports = Worker;
