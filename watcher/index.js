@@ -33,6 +33,9 @@ function Watcher(server, jobData) {
     Watcher.locketFiles = [];
     Watcher.workers = [];
     Watcher.timeoutId = null;
+    Watcher.maxWorkerInitCount = 3;
+
+    Watcher.watchDir = Lib.simplePath(Watcher.watchDir);
 
 
     Watcher.Start = function(callback) {
@@ -86,7 +89,7 @@ function Watcher(server, jobData) {
 
         Log.debug('Checking folder:', Watcher.watchDir);
         Fs.readdir(Watcher.watchDir, function(err, files) {
-            if (err) return Log.error(err);
+            if (err) return Log.error(err.message);
             //if (files.length == 0) return;
             var addedFiles = 0;
 
@@ -127,10 +130,10 @@ function Watcher(server, jobData) {
     };
 
     // Remove file from disk
-    Watcher.MoveFile = function(file) {
+    Watcher.MoveFile = function(file, dir) {
         if (Fs.existsSync(file)) {
-            Log.info('Moving file to ./added:', file);
-            var newDir = Path.join(Watcher.watchDir, 'added');
+            Log.info('Moving file %s to ./%s:', file, dir);
+            var newDir = Path.join(Watcher.watchDir, dir);
 
             if (!Fs.existsSync(newDir))
                 Fs.mkdirSync(newDir);
@@ -138,7 +141,7 @@ function Watcher(server, jobData) {
             var newFile = Path.join(newDir, file.split('/')[file.split('/').length-1]);
             Fs.renameSync(file, newFile);
         } else {
-            Log.info('File %s already moved to ./added:', file);
+            Log.info('File %s already moved to ./%s or does not exist:', file, dir);
         }
 
     };
@@ -154,14 +157,29 @@ function Watcher(server, jobData) {
         var worker = new Worker(Watcher, newFile, dump);
         Watcher.workers.push(worker);
 
-        worker.Init(function(err){
-            if (err) return callback(err);
+        var afterInit = function(err){
+            if (err) {
+                if (worker.workerInitCount < Watcher.maxWorkerInitCount) {
+                    Log.error(err.message);
+                    setTimeout(worker.Init, Watcher.timer, afterInit);
+                    return;
+                } else {
+                    Watcher.MoveFile(newFile, 'errors');
+                    worker.RemoveDump(function (err1){
+                        if (err1) Log.error(err1.message);
+                        callback(err);
+                        return;
+                    });
+                }
+            }
 
             // Move if well done
-            Watcher.MoveFile(newFile);
+            Watcher.MoveFile(newFile, 'added');
 
             callback();
-        });
+        };
+
+        worker.Init(afterInit);
     }
 
 }

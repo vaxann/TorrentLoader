@@ -2,7 +2,6 @@ var Request = require('request');
 var Util = require('util');
 var Log = require('../../log/index')(module);
 var Fs = require('fs');
-var Nt = require('nt');
 var Type = require('type-of-is');
 
 function Transmission(server){
@@ -132,16 +131,22 @@ function Transmission(server){
             }
 
             if (response.statusCode != 200)
-                return callback(new Error('Bad statusCode '+ response.statusCode));
+                return callback(new Error(Util.format('Bad statusCode = %d for torrent %s', response.statusCode, torrentFile)));
 
             if (!body || !Type(body,Object))
-                return callback(new Error('Can\'t parse body: '+ body));
+                return callback(new Error(Util.format('Can\'t parse response body %s when adding torrent %s ', body, torrentFile)));
 
-            if (body.result && body.result == 'success' && body.arguments['torrent-added']) {
-                var arg = body.arguments['torrent-added'];
-                callback(null, arg.hashString, arg.id);
+            if (body.result && body.result == 'success') {
+                if (body.arguments['torrent-added']) {
+                    var arg = body.arguments['torrent-added'];
+                    callback(null, arg.hashString, arg.id);
+                } else if (body.arguments['torrent-duplicate']) {
+                    var arg = body.arguments['torrent-duplicate'];
+                    callback(new Error(Util.format('Torrent %s does not added, reason: duplicate, hash=%s, id=%d', torrentFile, arg.hashString, arg.id)));
+                } else
+                    callback(new Error(Util.format('Torrent %s does not added, reason:%j', torrentFile, body)));
             } else
-                callback(new Error('Torrent does not added'), body);
+                callback(new Error(Util.format('Torrent %s does not added, reason:%j', torrentFile, body)));
 
         });
     };
