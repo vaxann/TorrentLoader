@@ -19,9 +19,10 @@ function Worker(watcher, file, dump) {
     Worker.file = file;
     Worker.torrentClient = watcher.server.torrentClient;
     Worker.isKilling = false;
-    Worker.checkFrequency = 30;
-    Worker.timer = Worker.checkFrequency * 1000;
-
+    Worker.timer = watcher.timer;
+    Worker.workerInitCount = 0;
+    Worker.maxWorkerInitCount = watcher.maxWorkerInitCount;
+    Worker.dump = dump;
 
     Worker.Kill = function(callback) {
         Worker.isKilling = true;
@@ -35,10 +36,18 @@ function Worker(watcher, file, dump) {
     };
 
     Worker.Init = function(callback) {
+        var ignoreNTCheck = false;
+        Worker.workerInitCount += 1;
+        Log.debug('Initializing worker for file %s, step %d', Worker.file, Worker.workerInitCount);
+
+        if (Worker.workerInitCount >= Worker.maxWorkerInitCount) ignoreNTCheck = true;
+
         Async.waterfall([
                 function(callback) { // step = 1; check torrent and get it's infoHash
                     if (Worker.isKilling) return callback(new Error('Killed by Worker.Kill'));
-                    if (dump) return callback(null, dump.hash);
+                    if (ignoreNTCheck) return callback(null,null);
+                    if (Worker.dump) return callback(null, Worker.dump.hash);
+
 
                     Nt.read(Worker.file, function(err,torrent) {
                         //log.debug('Response to checking torrent:', arguments);
@@ -49,27 +58,36 @@ function Worker(watcher, file, dump) {
 
                         Dump.push(1, Worker.file, infoHash, function(err,obj) {
                             if (err) return callback(err);
-                            dump = obj;
+                            Worker.dump = obj;
                             callback(null, infoHash);
                         });
                     });
                 },
                 function(infoHash, callback){ //step = 2; add torrent ot download
                     if (Worker.isKilling) return callback(new Error('Killed by Worker.Kill'));
-                    if (dump && dump.step >= 2 ) return callback(null, infoHash);
+                    if (!ignoreNTCheck && Worker.dump && Worker.dump.step >= 2 ) return callback(null, infoHash);
 
                     Worker.torrentClient.AddTorrent(Worker.file, watcher.downloadDir, function(err,hash,id){
                         if (err) return callback(err);
-                        if (infoHash != hash) return callback(new Error('AddTorrent error: local and returned hashes is not equal'));
 
-                        Dump.changeStep(infoHash, 2, function(err, obj) {
-                            if (err) return callback(err);
+                        if (ignoreNTCheck) {
+                            Dump.push(2, Worker.file, hash, function(err,obj) {
+                                if (err) return callback(err);
+                                Worker.dump = obj;
+                                callback(null, hash);
+                            });
+                        } else {
+                            if (infoHash != hash) return callback(new Error('AddTorrent error: local and returned hashes is not equal'));
 
-                            dump = obj;
-                            Log.info('File %s added', Worker.file);
+                            Dump.changeStep(infoHash, 2, function(err, obj) {
+                                if (err) return callback(err);
 
-                            callback(null, infoHash);
-                        });
+                                Worker.dump = obj;
+                                Log.info('File %s added', Worker.file);
+
+                                callback(null, infoHash);
+                            });
+                        }
                     });
                 }
             ],
@@ -79,8 +97,8 @@ function Worker(watcher, file, dump) {
 
                 Worker.infoHash = infoHash;
 
-                if (dump && dump.step == 2 ) Worker.CheckDownloadState();
-                if (dump && dump.step >= 3 ) Worker.StartCompletesActions();
+                if (Worker.dump && Worker.dump.step == 2 ) Worker.CheckDownloadState();
+                if (Worker.dump && Worker.dump.step >= 3 ) Worker.StartCompletesActions();
 
                 callback();
             }
@@ -117,7 +135,7 @@ function Worker(watcher, file, dump) {
 
                 Dump.changeStep(Worker.infoHash, 3, function(err, obj) {
                     if (err) return Log.error(Util.format('Error with saving dump: %j', err.message));
-                    dump = obj;
+                    Worker.dump = obj;
 
                     Log.info('File %s downloaded', Worker.file);
                     Worker.StartCompletesActions();
@@ -127,8 +145,7 @@ function Worker(watcher, file, dump) {
     };
 
     Worker.StartCompletesActions = function(){
-        Dump.removeDumpByHash(Worker.infoHash, function(err){
-            if (err) return Log.error(err.message);
+        Worker.RemoveDump(function(err){
             Log.info('Actions for torrent %s completed', Worker.file);
         });
 
@@ -154,6 +171,23 @@ function Worker(watcher, file, dump) {
 
         Worker.CompletesActionsDone(Worker.file);*/
     };
+
+    Worker.RemoveDump = function(callback){
+        var hash;
+        if (Worker.infoHash)
+            hash = Worker.infoHash;
+        else if (Worker.dump)
+            hash = Worker.dump.hash;
+        else
+            return callback();
+
+        Dump.removeDumpByHash(hash, function(err){
+            if (err) return callback(err);
+            Worker.dump = null;
+        });
+
+    };
+
 
 
 /*

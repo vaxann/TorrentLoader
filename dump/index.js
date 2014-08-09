@@ -3,6 +3,7 @@ var Path = require('path');
 var Async = require('async');
 var Log = require('../log/index')(module);
 var Type = require('type-of-is');
+var Lib = require('../lib');
 
 var fileNameOfDump = Path.join(Path.dirname(__dirname), 'dump.json');
 var dumpHash = {};
@@ -21,22 +22,23 @@ function push(step, file, hash, callback) { // step - stage of addition torrent
     if(!Type(hash,String))
         return callback(new Error('Error, type of attr "hash" must be a "String"'));
 
-    var obj = {step: step, file: file, hash: hash};
-
     var oldObj = getDumpByHash(hash);
-    if (oldObj == null) {
-        dumpList.push(obj);
-
-        Async.parallel([
-            rebuildIndexes,
-            deserialize
-        ],function(err){
-            if (err) return callback(err);
-            callback(null, obj);
-        });
+    if (oldObj) {
+        oldObj.step = step;
+        oldObj.file = file;
     } else {
-        callback(null, oldObj);
+        var obj = {step: step, file: file, hash: hash};
+        dumpList.push(obj);
     }
+
+    Async.parallel([
+        rebuildIndexes,
+        deserialize
+    ],function(err){
+        if (err) return callback(err);
+
+        callback(null, obj);
+    });
 }
 
 
@@ -73,7 +75,7 @@ function rebuildIndexes(callback) {
         Async.each(dumpList, function(obj,callback) {
             dumpHash[obj.hash] = obj;
 
-            var dir = Path.dirname(obj.file);
+            var dir = Lib.simplePath(Path.dirname(obj.file));
             if (dir in dumpListByDir)
                 dumpListByDir[dir].push(obj);
             else
@@ -144,7 +146,7 @@ function removeDumpByHash(hash, callback) {
             deserialize
         ],callback);
     } else {
-        callback('Error removeDumpByHash, can\'t find hash');
+        callback(new Error('Error removeDumpByHash, can\'t find hash'));
     }
 }
 
