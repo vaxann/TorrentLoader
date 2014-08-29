@@ -83,7 +83,7 @@ function Watcher(server, jobData) {
     // Read dir and check in for new torrent files
     Watcher.CheckFolder = function() {
         if (!Watcher.server.isOnline) {
-            Log.info('Server %d is offline -> turnoff CheckFolder loop', Watcher.server.name);
+            Log.info('Server %d is offline -> turnoff CheckFolder loop for job %s', Watcher.server.name, Watcher.name);
             return;
         }
 
@@ -105,7 +105,7 @@ function Watcher(server, jobData) {
 
                     Watcher.timeoutId = setTimeout(Watcher.CheckFolder, Watcher.timer);
 
-                    Log.debug('Added %d workers', addedFiles);
+                    Log.debug('Added %d workers for job %s', addedFiles, Watcher.name);
                 }
             );
         });

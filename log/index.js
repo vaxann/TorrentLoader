@@ -1,6 +1,7 @@
 var winston = require('winston');
 var dateFormat = require('dateformat');
 var ENV = process.env.NODE_ENV;
+var WebLogger = require('./web_logger');
 
 // can be much more flexible than that O_o
 function getLogger(module) {
@@ -17,7 +18,13 @@ function getLogger(module) {
                     return dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss.L");
                 },
                 level: (ENV == 'dev') ? 'debug' : 'info',
-                //level: 'debug',
+                label: path
+            }),
+            new WebLogger({
+                timestamp: function(){
+                    return dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss.L");
+                },
+                level: (ENV == 'dev') ? 'debug' : 'info',
                 label: path
             })
         ]

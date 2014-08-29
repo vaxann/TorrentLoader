@@ -8,7 +8,7 @@ var Log = require('../log')(module);
 var Async = require('async');
 var Ping = require('ping');
 
-function Server(serverData) {
+function Server(serverData, webServer) {
     var Server = this;
 
     // cloning server data
@@ -23,6 +23,7 @@ function Server(serverData) {
     }
 
 
+    Server.webServer = webServer;
     Server.jobs = [];
     Server.isOnline = false;
     Server.torrentClient = new TorrentClient(Server);
